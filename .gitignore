@@ -11,3 +11,14 @@ docs/
 # Tool/editor caches
 .vite
 *.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# Pipeline outputs that are large and regenerable
+data/raw/
