@@ -1,0 +1,15 @@
+{
+  "username": "example",
+  "display_name": "Example User",
+  "logs": [
+    {
+      "tmdb_id": 27205,
+      "title": "Inception",
+      "poster_path": "/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg",
+      "watched_on": "2026-05-22",
+      "rating": 4.5,
+      "review": "Sample log entry — delete me once you have real ones.",
+      "logged_at": "2026-05-22T20:11:00.000Z"
+    }
+  ]
+}
