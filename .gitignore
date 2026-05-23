@@ -22,3 +22,6 @@ __pycache__/
 
 # Pipeline outputs that are large and regenerable
 data/raw/
+
+# Probe / exploration reports (regenerable, not the contract)
+pipeline/reports/
