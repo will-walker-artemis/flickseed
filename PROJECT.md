@@ -51,16 +51,19 @@ sharing. TouchDesigner as parallel cinematic-render output (later).
 ## 3. Pipeline
 
 ```
-TMDB seeds + Wikipedia + your notes + reviews
+TMDB discover seed query (+ your notes, optional)
         │
         ▼  pipeline/flickseed_pipeline/ingest/
-data/raw/*.json
+data/raw/films.json
+        │
+        ▼  pipeline/flickseed_pipeline/enrich/   (TMDB /keywords, /credits, /recommendations per film)
+data/raw/{keywords,credits,recommendations}.json
         │
         ▼  pipeline/flickseed_pipeline/corpus/
-data/corpus/*.md  (~200–300 token text per film)
+data/corpus/*.md  (TMDB overview + optional notes per film)
         │
-        ▼  pipeline/flickseed_pipeline/embed/
-data/derived/embeddings.parquet
+        ▼  pipeline/flickseed_pipeline/embed/    (multi-view: text + keyword + crew + graph node2vec)
+data/derived/embeddings.parquet  (concatenated, L2-normalized per §5)
         │
         ├─► diagnostic: top-5-similar test  ◄── go/no-go gate
         │
@@ -147,32 +150,39 @@ flickseed/
 
 ## 5. The corpus problem (highest-leverage decision)
 
-Embeddings are only as good as text. TMDB overviews → genre-recognizer, boring.
+Embeddings are only as good as the signal we give them. TMDB overviews alone
+tend toward genre-recognizer output. The mitigation is **multi-view
+vectorization** across multiple TMDB signals, not richer text.
 
-**Sources, in priority order:**
-1. **Wikipedia plot + reception** — free, clean API, surprisingly rich
-2. **Your own notes** — 1–2 sentences per film in your voice; pushes embedding space toward *your* taste axes
-3. **TMDB metadata** — title, year, director, country, keywords
-4. **Review excerpts** — Letterboxd if accessible (gray area), RT blurbs if not
-5. **Editorial criticism** — Criterion, Sight & Sound where they exist
+**Signals, in priority order:**
+1. **TMDB metadata** — overview, keywords, credits, genres, country, language, year
+2. **TMDB recommendation graph** — node2vec over `/recommendations` captures
+   "people-who-liked-X-also-liked-Y" texture not present in any text field
+3. **Your own notes** *(optional)* — 1–2 sentences per film in your voice;
+   injected into corpus text before embedding so they shift the map's geometry
+4. **Deferred** — Wikipedia plot + reception, Letterboxd reviews
 
-**Per-film text template** (~200–300 tokens):
+**Per-film vector** (concatenated, L2-normalized):
 ```
-[Title] ([Year], dir. [Director], [Country])
-
-[Wikipedia plot, condensed to ~80 tokens]
-
-Your one-liner: [1–2 sentences in your voice about texture/feel]
-
-Atmosphere: [5–10 affective descriptors]
-
-[1 vivid sentence from a critic/Letterboxd review]
+[ overview_embed | keyword_multihot_PCA | crew_sparse_PCA
+  | recommendation_node2vec | your_notes_embed (optional) ]
 ```
 
-**Diagnostic test** (run after every corpus revision):
+Tunable weights per view. Raise `recommendation_node2vec` if the diagnostic
+shows genre-clustering.
+
+**Diagnostic test** (run after every embedding revision):
 - For 10 random films, print top-5 most similar
-- If results = "same genre, same era" → corpus too genre-loaded; add more affective text
-- If results = "tonally adjacent across genre/era" → embeddings working; proceed
+- If results = "same genre, same era" → raise non-text view weights and add notes
+- If results = "tonally adjacent across genre/era" → proceed
+
+**Two personalization paths** (intentional, separate concerns):
+- **Upstream (geometry):** your notes enter signal #3 above and are embedded
+  with the rest. Changes which films cluster.
+- **Downstream (presentation):** a `<SettingsPanel>` in the React app lets you
+  override station names, reorder films within a station, pin/hide films, and
+  curate line definitions. Changes how the map *reads*, not its shape.
+  See §8 and §12.
 
 ---
 
@@ -248,9 +258,20 @@ hour by hand vs. weeks of solver tuning.
   <SidePanel>                    ← stateless, renders selected station's films
     <FilmList />
   </SidePanel>
+  <SettingsPanel>                ← downstream personalization (see §5)
+    <StationOverrides />         ← rename, pin, hide stations
+    <FilmOverrides />            ← reorder/pin films within a station
+    <LineOverrides />            ← curate / edit lines
+  </SettingsPanel>
   <SearchBox />                  ← typeahead → camera pan
 </MapPage>
 ```
+
+**Downstream personalization storage.** Settings panel writes to
+`data/personal.json` — a small overlay file the renderer merges on top of
+`layout.json` at load time. The renderer reads two files: `layout.json` (the
+geometry contract from the pipeline) + `personal.json` (your downstream
+overrides). Commit status of `personal.json` is a pending decision (§12).
 
 State management: React context or a small Zustand store, depending on what
 already exists in the codebase. Selection state syncs to URL (`?station=...`).
@@ -288,10 +309,10 @@ Reads same `data/layout.json`. Provides cinematic affordances web can't.
 |---|---|---|
 | 0 | done | Strip the existing logging features; move `src/` → `app/src/`; verify build still works |
 | 0b | done | Scaffold `pipeline/` with uv; empty package; verify pipeline builds and imports |
-| 1 | 1 | TMDB ingestion of 150 seed-derived films (Python port of existing tmdb.ts) |
-| 2 | 1 | Corpus template generator (Wikipedia + RT pull, draft .md per film) |
-| 3 | 0.5 | First embedding pass + top-5 diagnostic |
-| 3b | ongoing | **Hand-edit corpus, 10–20 films/evening, in parallel** |
+| 1 | 1 | TMDB ingestion via committed `/discover` seed query (iterate using `/probe-tmdb` skill, then bake the query into `pipeline/flickseed_pipeline/ingest/`) |
+| 2 | 1 | Enrichment pass — `/keywords`, `/credits`, `/recommendations` per seed (via `/embed-films` skill) |
+| 3 | 1 | Multi-view embedding (overview + keyword + crew + node2vec) + top-5 diagnostic |
+| 3b | ongoing | *Optional:* hand-write 1–2 sentence notes per film, re-embed; signal #3 in §5 |
 | 4 | 1 | BERTopic → stations + keywords |
 | 5 | 0.5 | Hand-name stations |
 | 6 | 1 | Station graph + path-discovery CLI |
@@ -321,11 +342,9 @@ Reads same `data/layout.json`. Provides cinematic affordances web can't.
 
 ## 12. Decisions still pending
 
-- **Letterboxd corpus access** — gray-area scraping vs. forgoing
+- **`personal.json` commit status** — committed to git (shared, versioned) vs gitignored (private overlay)
 - **Topic count target** — let BERTopic decide vs. manual sweep
 - **District definition** — clusters of stations? hand-drawn polygons? color regions?
-- **Film ordering within station** — closeness-to-centroid? year? personal?
-- **Off-line stations** — show stations not on any named line? how?
 - **Mobile layout** — abandon the map, list-only? rotate-only?
 - **Cold-start UX** — what does the user see before clicking?
 - **Search match scope** — titles only, or +directors +station names?
