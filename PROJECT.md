@@ -22,8 +22,9 @@ this repo started as — that's being stripped out.
 **Aesthetic anchor.** Vignelli NYC subway — geometric, abstract, angles at
 0°/45°/90°, lines as the dominant visual element, whitespace as structural.
 
-**End use.** Shareable web thing, hosted on GitHub Pages (no backend).
-TouchDesigner as parallel cinematic-render output (later).
+**End use.** Local web app for now (Vite dev server). Hosting decision deferred —
+will revisit once the renderer + a real pipeline run produce something worth
+sharing. TouchDesigner as parallel cinematic-render output (later).
 
 ---
 
@@ -38,7 +39,7 @@ TouchDesigner as parallel cinematic-render output (later).
 | Renderer stack | React + SVG (JSX), d3 for math only, Tailwind for styles | Matches existing repo; React owns DOM, d3 owns numbers |
 | Pipeline stack | Python in `pipeline/` subdirectory, uv-managed | Right tool for embeddings/clustering; isolated from app |
 | Pipeline → app contract | `data/layout.json` committed to repo | Pipeline writes, app reads, neither owns the data dir |
-| Hosting | GitHub Pages from `app/dist` | No backend, static only, free |
+| Hosting | Local Vite dev server (for now) | Iterating locally until there's something worth sharing; deploy choice deferred |
 | Edge type for graph | Mutual k-NN (k=5–10) | Uniform local density; thresholds create hubs+orphans |
 | Clustering | BERTopic (stations + keywords in one pass) | Solves naming problem |
 | Station naming | Hand-written, evocative, not genre-y | This is where the project's voice lives |
@@ -132,25 +133,15 @@ flickseed/
 │
 ├── td/                            ← TouchDesigner files (later)
 │
-├── .github/workflows/
-│   └── deploy.yml                 ← Pages from app/dist
-│
 ├── .gitignore
-└── .env.example
+└── pipeline/.env.example          ← TMDB_API_KEY for ingest
 ```
 
-**What to delete from the current repo:**
-- `src/pages/` (search, log, film-detail routes)
-- `src/lib/auth.ts` (no per-user accounts)
-- `data/users/` (no per-user logs)
-- Old logging sections of `README.md`
-
-**What to keep (or port):**
-- Vite + Tailwind + TS scaffolding
-- `src/lib/tmdb.ts` (port URL patterns to Python)
-- `src/lib/github.ts` if you ever want app to read layout.json via API
-- `.github/workflows/` deploy config
-- `Layout.tsx` component pattern (becomes chrome around the map)
+**Done in Phase 0 (commit history if you want details):**
+- Stripped `src/pages/`, `src/lib/{auth,github,tmdb}.ts`, `data/users/`, `src/components/Layout.tsx`
+- TMDB URL patterns ported into `pipeline/flickseed_pipeline/ingest/__init__.py` docstring
+- Moved Vite/Tailwind/TS scaffolding under `app/`
+- Dropped `.github/workflows/deploy.yml` (no GH Pages for now)
 
 ---
 
@@ -270,9 +261,9 @@ already exists in the codebase. Selection state syncs to URL (`?station=...`).
 - Click line → side panel switches to journey view; map dims everything else
 - Search → autocomplete by film/station name → camera pans to home station
 
-**Loading layout.json:** bundle it as a static import in the build, OR fetch
-at runtime from `data/layout.json` (same origin since GitHub Pages serves the repo).
-Bundling is faster but invalidates the cache on every pipeline update.
+**Loading layout.json:** fetched at runtime from `/layout.json`. Vite serves
+the repo's `data/` directory as the dev `publicDir` (see `app/vite.config.ts`),
+so pipeline runs are picked up on next page reload without rebuilding the app.
 
 ---
 
@@ -295,8 +286,8 @@ Reads same `data/layout.json`. Provides cinematic affordances web can't.
 
 | Phase | Days | What |
 |---|---|---|
-| 0 | 0.5 | Strip the existing logging features; rename `src/` → `app/src/`; verify build still works |
-| 0b | 0.5 | Scaffold `pipeline/` with uv; empty package; verify pipeline builds and imports |
+| 0 | done | Strip the existing logging features; move `src/` → `app/src/`; verify build still works |
+| 0b | done | Scaffold `pipeline/` with uv; empty package; verify pipeline builds and imports |
 | 1 | 1 | TMDB ingestion of 150 seed-derived films (Python port of existing tmdb.ts) |
 | 2 | 1 | Corpus template generator (Wikipedia + RT pull, draft .md per film) |
 | 3 | 0.5 | First embedding pass + top-5 diagnostic |
@@ -323,7 +314,6 @@ Reads same `data/layout.json`. Provides cinematic affordances web can't.
 | BERTopic produces wrong topic count | Sweep `min_topic_size`; aim for 25–40 |
 | Vignelli solver fails | Reduce line count; lines ≤6 to be solvable |
 | Mixed-stack repo confusion | Clear `app/` vs `pipeline/` boundary, separate READMEs |
-| GitHub Pages doesn't serve `data/layout.json` | Confirm Pages serves repo root, not just `app/dist`; may need build step that copies |
 | Label collisions | Hand-place; don't solve |
 | Corpus work feels endless | 5–10 min/film; uneven detail is fine |
 
@@ -341,7 +331,7 @@ Reads same `data/layout.json`. Provides cinematic affordances web can't.
 - **Search match scope** — titles only, or +directors +station names?
 - **Color palette** — anchored to which references?
 - **Typography** — geometric sans-serif (Vignelli) vs. cinematic alternative
-- **layout.json delivery** — bundled at build vs. fetched at runtime
+- **Hosting** — deferred until there's something worth deploying (was GH Pages)
 
 ---
 
@@ -373,6 +363,9 @@ Key decisions that took place:
    features but kept the Vite/Tailwind/GitHub-Pages infrastructure**
 8. Pipeline in Python lives in `pipeline/`, communicates with React app only
    via committed `data/layout.json`
+9. **Dropped the GitHub Pages constraint** — running entirely locally until the
+   thing reaches a good working state. Vite serves `data/` directly; no deploy
+   plumbing. Source control still lives on GitHub.
 
 When bringing this doc into a new conversation, that's enough background.
 
