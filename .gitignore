@@ -1,0 +1,13 @@
+node_modules
+dist
+.env
+.env.local
+.DS_Store
+*.log
+
+# Local-only notes — kept on disk, not shared
+docs/
+
+# Tool/editor caches
+.vite
+*.tsbuildinfo
