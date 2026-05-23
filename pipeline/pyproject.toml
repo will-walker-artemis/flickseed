@@ -12,5 +12,5 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["flickseed_pipeline"]
 
-[tool.uv]
-dev-dependencies = []
+[dependency-groups]
+dev = []
