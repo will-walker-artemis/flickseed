@@ -32,10 +32,44 @@ Will invokes this with `/probe-tmdb` when:
 
 ## Behavior when invoked
 
-1. **Read the boilerplate query catalog below.** If Will hasn't said what he wants, list the catalog and ask which to run, or whether to compose a new one.
-2. **Create or edit `pipeline/scripts/get_films.py`** to issue the selected query/queries. Reads `TMDB_API_KEY` from `pipeline/.env`. Uses `httpx` (already a likely pipeline dep) or `requests`.
-3. **Run the script** via uv: `cd pipeline && uv run python scripts/get_films.py`.
-4. **Open `pipeline/reports/film-report.md`** and show Will the table. Ask if he wants to refine and re-run.
+### Preflight (always run first; abort the skill if it fails)
+
+1. **Check for the API key.** In order:
+   - Look for a `TMDB_API_KEY=...` line in `pipeline/.env`
+   - Otherwise check the process environment `$TMDB_API_KEY`
+
+   If found, proceed to step 3.
+
+2. **If not found, ask Will for the key.**
+   > "No `TMDB_API_KEY` found in `pipeline/.env` or your environment. Paste your TMDB v3 API key (get one at https://www.themoviedb.org/settings/api)."
+
+   On receipt, append `TMDB_API_KEY=<key>` to `pipeline/.env` (create the file if missing) using the **Write / Edit** tools — *not* `echo "..." >> .env`, since that surfaces the key in shell-command transcripts. Do **not** echo the key back to chat. `.env` is gitignored (`.env` is in the repo `.gitignore`).
+
+3. **Reachability check.** Ping TMDB with the loaded key:
+
+   ```bash
+   set -a; source pipeline/.env; set +a
+   curl -s -o /dev/null -w "%{http_code}\n" \
+     "https://api.themoviedb.org/3/configuration?api_key=$TMDB_API_KEY"
+   ```
+
+   Expected output: `200`. Otherwise troubleshoot with Will:
+
+   | Code / signal | Likely cause | Action |
+   |---|---|---|
+   | `401` | Invalid / revoked key | Ask Will to regenerate at https://www.themoviedb.org/settings/api, update `pipeline/.env`, re-run preflight |
+   | `404` / `5xx` | TMDB-side outage | Check https://status.themoviedb.org, retry shortly |
+   | curl: network error, DNS fail, timeout | Connectivity / VPN / proxy | Run `curl -v https://api.themoviedb.org/3/configuration` to localize; ask about VPN/proxy/captive portal |
+   | Anything else | Unknown | Show Will the raw curl output and stop |
+
+   **Do not proceed past preflight without a `200`.**
+
+### Query workflow
+
+4. **Read the boilerplate query catalog below.** If Will hasn't said what he wants, list the catalog and ask which to run, or whether to compose a new one.
+5. **Create or edit `pipeline/scripts/get_films.py`** to issue the selected query/queries. Reads `TMDB_API_KEY` from `pipeline/.env` via `python-dotenv`. Uses `httpx`.
+6. **Run the script** via uv: `cd pipeline && uv run python scripts/get_films.py`.
+7. **Open `pipeline/reports/film-report.md`** and show Will the table. Ask if he wants to refine and re-run.
 
 ## Output contract — `film-report.md`
 

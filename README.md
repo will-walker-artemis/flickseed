@@ -82,10 +82,11 @@ flowchart TB
 ## Repo shape
 
 ```
-app/         React + TypeScript renderer (Vite, Tailwind v4)
-pipeline/    Python data pipeline (uv-managed) — writes data/layout.json
-data/        layout.json (the contract) + corpus/ + derived artefacts
-td/          TouchDesigner files (later)
+app/             React + TypeScript renderer (Vite, Tailwind v4)
+pipeline/        Python data pipeline (uv-managed) — writes data/layout.json
+data/            layout.json (the contract) + corpus/ + derived artefacts
+td/              TouchDesigner files (later)
+.claude/skills/  Project-local Claude Code skills (see below)
 ```
 
 ## Run it
@@ -99,3 +100,22 @@ cd pipeline && uv sync && uv run python -c "import flickseed_pipeline"
 ```
 
 Running entirely locally for now — no deploy.
+
+## Claude skills
+
+Two project-local skills under `.claude/skills/` drive the data work. They
+auto-load when Claude Code is opened in this workspace; invoke with a slash.
+
+- **`/probe-tmdb`** — iterate on TMDB `/discover` filter combinations to
+  settle the canonical seed query. Generates `pipeline/scripts/get_films.py`;
+  outputs `pipeline/reports/film-report.md` for visual review. Edit the
+  boilerplate query catalog inside the skill as your taste sharpens.
+- **`/embed-films`** — run the representation-learning pipeline (enrich →
+  feature-extract → embed → graph node2vec → multi-view compose, per
+  [`PROJECT.md` §5](./PROJECT.md#5-the-corpus-problem-highest-leverage-decision)).
+  Writes `data/derived/embeddings.parquet` plus a top-5-similar diagnostic at
+  `pipeline/reports/embedding-diagnostic.md`. View weights live in
+  `pipeline/config.yaml` — tweak and re-invoke.
+
+Workflow: `/probe-tmdb` settles the query → commit it under
+`pipeline/flickseed_pipeline/ingest/` → `/embed-films` consumes it.
