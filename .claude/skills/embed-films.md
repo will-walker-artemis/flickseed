@@ -99,20 +99,53 @@ graph:
 
 ## Behavior when invoked
 
-1. **Verify prerequisites.**
-   - `pipeline/.env` has `TMDB_API_KEY`
+### Preflight (always run first; abort the skill if it fails)
+
+1. **Check for the API key.** In order:
+   - Look for a `TMDB_API_KEY=...` line in `pipeline/.env`
+   - Otherwise check the process environment `$TMDB_API_KEY`
+
+   If found, proceed to step 3.
+
+2. **If not found, ask Will for the key.**
+   > "No `TMDB_API_KEY` found in `pipeline/.env` or your environment. Paste your TMDB v3 API key (get one at https://www.themoviedb.org/settings/api)."
+
+   On receipt, append `TMDB_API_KEY=<key>` to `pipeline/.env` (create the file if missing) using the **Write / Edit** tools — *not* `echo "..." >> .env`, since that surfaces the key in shell-command transcripts. Do **not** echo the key back to chat. `.env` is gitignored.
+
+3. **Reachability check.** Ping TMDB with the loaded key:
+
+   ```bash
+   set -a; source pipeline/.env; set +a
+   curl -s -o /dev/null -w "%{http_code}\n" \
+     "https://api.themoviedb.org/3/configuration?api_key=$TMDB_API_KEY"
+   ```
+
+   Expected output: `200`. Otherwise troubleshoot with Will:
+
+   | Code / signal | Likely cause | Action |
+   |---|---|---|
+   | `401` | Invalid / revoked key | Ask Will to regenerate at https://www.themoviedb.org/settings/api, update `pipeline/.env`, re-run preflight |
+   | `404` / `5xx` | TMDB-side outage | Check https://status.themoviedb.org, retry shortly |
+   | curl: network error, DNS fail, timeout | Connectivity / VPN / proxy | Run `curl -v https://api.themoviedb.org/3/configuration` to localize; ask about VPN/proxy/captive portal |
+   | Anything else | Unknown | Show Will the raw curl output and stop |
+
+   **Do not proceed past preflight without a `200`.**
+
+### Embedding workflow
+
+4. **Verify pipeline prerequisites.**
    - The canonical query is committed under `pipeline/flickseed_pipeline/ingest/`
-   - `pipeline/config.yaml` exists (create with defaults if not)
+   - `pipeline/config.yaml` exists (create with the defaults shown above if not)
    - Required deps in `pipeline/pyproject.toml`:
      `httpx`, `sentence-transformers`, `networkx`, `node2vec` (or `pecanpy`),
      `scikit-learn`, `pandas`, `pyarrow`. If missing, add them and run `uv sync`.
-2. **Show current view weights.** Read `pipeline/config.yaml`, display.
-3. **Ask whether to refresh enrichment.** TMDB calls are slow and rate-limited
+5. **Show current view weights.** Read `pipeline/config.yaml`, display.
+6. **Ask whether to refresh enrichment.** TMDB calls are slow and rate-limited
    (~40/sec). Default: use cached `data/raw/*.json` if present, only fetch
    missing endpoints. Offer `--refresh` to force re-fetch.
-4. **Create / edit `pipeline/scripts/enrich_and_embed.py`** to run stages 1–9.
-5. **Run it:** `cd pipeline && uv run python scripts/enrich_and_embed.py`.
-6. **Show the diagnostic.** Open `pipeline/reports/embedding-diagnostic.md`,
+7. **Create / edit `pipeline/scripts/enrich_and_embed.py`** to run stages 1–9.
+8. **Run it:** `cd pipeline && uv run python scripts/enrich_and_embed.py`.
+9. **Show the diagnostic.** Open `pipeline/reports/embedding-diagnostic.md`,
    summarize the 10 sample results, ask if they look "tonally adjacent across
    genre/era" (good) or "same genre, same era" (raise graph weight, re-run).
 
