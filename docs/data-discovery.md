@@ -2,10 +2,13 @@
 
 How to find and pull films from TMDB for the Flickseed corpus.
 
-The pipeline starts with a seed set of films. Before committing that set,
-you explore what TMDB has using `pipeline/scripts/get_films.py` — a CLI tool
-that queries TMDB's `/discover/movie` endpoint with different filter
-combinations and writes markdown reports you can review.
+The easiest way to get started is the **`/data-discovery-tmdb`** Claude skill.
+It walks you through the process interactively — just tell it what kind of
+films you're looking for and it handles the queries, shows you results, and
+helps you refine. Use it in any Claude Code workspace opened in this repo.
+
+Everything below documents the underlying CLI tool if you want to run queries
+directly.
 
 ## Setup
 
@@ -131,3 +134,6 @@ Once you've settled on a query (or combination of queries) that produces a film
 list you're happy with, that query gets committed into
 `pipeline/flickseed_pipeline/ingest/`. From there, the `/embed-films` skill
 takes over to enrich, embed, and cluster the films.
+
+If you used the `/data-discovery-tmdb` skill, it will guide you through this
+transition.
