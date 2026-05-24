@@ -5,6 +5,7 @@ films are listed in a side panel when you click a station. Lines are curated
 journeys through embedding space.
 
 Architecture, decisions, and build order live in [`PROJECT.md`](./PROJECT.md).
+A visual overview is in [`docs/architecture.md`](./docs/architecture.md).
 
 ## Repo shape
 
