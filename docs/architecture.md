@@ -1,11 +1,10 @@
-# Flickseed
+# Flickseed architecture
 
-A cinematic subway-map of films. Stations are concepts (mood, texture, register);
-films are listed in a side panel when you click a station. Lines are curated
-journeys through embedding space.
+A bird's-eye view of how the pieces fit together. The Python pipeline turns
+TMDB data into a geometric subway-map layout; renderers consume that layout
+through a single committed contract: `data/layout.json`.
 
-Architecture, decisions, and build order live in [`PROJECT.md`](./PROJECT.md).
-Full diagram with legend and directory table in [`docs/architecture.md`](./docs/architecture.md).
+For decisions, rationale, and build order see [`../PROJECT.md`](../PROJECT.md).
 
 ```mermaid
 flowchart TB
@@ -79,23 +78,27 @@ flowchart TB
     class diagGate gate
 ```
 
-## Repo shape
+## Reading the diagram
 
-```
-app/         React + TypeScript renderer (Vite, Tailwind v4)
-pipeline/    Python data pipeline (uv-managed) — writes data/layout.json
-data/        layout.json (the contract) + corpus/ + derived artefacts
-td/          TouchDesigner files (later)
-```
+- **Solid arrows** = data flow committed to disk or fetched from the network.
+- **Dashed arrows** = optional inputs / overlays that don't change pipeline geometry.
+- **Amber outline** marks `layout.json`, the single contract between pipeline
+  and renderers — neither renderer computes layout.
+- **Purple outlines** mark the two manual curation steps (station naming, line
+  selection). Everything else runs unattended.
+- **Green outline** is the go/no-go diagnostic gate; failing it loops back into
+  embedding-weight tuning rather than continuing downstream.
 
-## Run it
+## What lives where
 
-```bash
-# Renderer (placeholder until the pipeline has output)
-cd app && npm install && npm run dev
-
-# Pipeline (stages are stubs in Phase 0b)
-cd pipeline && uv sync && uv run python -c "import flickseed_pipeline"
-```
-
-Running entirely locally for now — no deploy.
+| Path | Role |
+|---|---|
+| `pipeline/flickseed_pipeline/` | Stage packages (ingest, enrich, corpus, embed, cluster, graph, layout) + `export.py` |
+| `pipeline/scripts/` | CLI entry points (`run_pipeline.py`, `diagnose_embeddings.py`) |
+| `data/raw/` | TMDB responses — large, regenerable, gitignored |
+| `data/corpus/` | Per-film markdown — committed; the hand-curated asset |
+| `data/derived/` | Embeddings, stations, station graph, candidate paths — committed |
+| `data/layout.json` | The contract. Pipeline writes, renderers read |
+| `data/personal.json` | Renderer-side overrides (renames, pins, hides). Commit status pending — see PROJECT.md §12 |
+| `app/src/` | React renderer; Vite serves `data/` as `publicDir` so layout changes reload without rebuilding |
+| `td/` | TouchDesigner renderer, parallel consumer of `layout.json` (later phase) |
