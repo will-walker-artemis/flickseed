@@ -26,15 +26,31 @@ cd pipeline && uv sync && uv run python -c "import flickseed_pipeline"
 
 Running entirely locally for now — no deploy.
 
+## Data discovery
+
+The pipeline starts with a curated seed set of films pulled from TMDB. Before
+committing that set, explore what's available using `pipeline/scripts/get_films.py`:
+
+```bash
+cd pipeline
+
+# Run a built-in preset
+uv run python scripts/get_films.py canon-quality
+
+# Pull sci-fi films with custom filters
+uv run python scripts/get_films.py --params 'with_genres=878&vote_count.gte=100&vote_average.gte=7.5&sort_by=vote_average.desc' -o reports/scifi.md
+```
+
+Full usage, filter reference, and genre IDs in [`docs/data-discovery.md`](./docs/data-discovery.md).
+
 ## Claude skills
 
 Two project-local skills under `.claude/skills/` drive the data work. They
 auto-load when Claude Code is opened in this workspace; invoke with a slash.
 
 - **`/probe-tmdb`** — iterate on TMDB `/discover` filter combinations to
-  settle the canonical seed query. Generates `pipeline/scripts/get_films.py`;
-  outputs `pipeline/reports/film-report.md` for visual review. Edit the
-  boilerplate query catalog inside the skill as your taste sharpens.
+  settle the canonical seed query. Runs `pipeline/scripts/get_films.py` and
+  outputs reports under `pipeline/reports/` for visual review.
 - **`/embed-films`** — run the representation-learning pipeline (enrich →
   feature-extract → embed → graph node2vec → multi-view compose, per
   [`PROJECT.md` §5](./PROJECT.md#5-the-corpus-problem-highest-leverage-decision)).

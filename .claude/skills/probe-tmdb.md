@@ -25,7 +25,7 @@ Will invokes this with `/probe-tmdb` when:
 | Artifact | Path | Lifecycle |
 |---|---|---|
 | The skill itself | `.claude/skills/probe-tmdb.md` (this file) | Durable — Will edits the boilerplate over time |
-| The probe script | `pipeline/scripts/get_films.py` | Created/edited by this skill each run |
+| The probe script | `pipeline/scripts/get_films.py` | Committed, durable. **Do not rewrite** — use as-is or extend if Will asks for a new feature |
 | The probe report | `pipeline/reports/film-report.md` | Output of running the script; overwritten each run |
 
 `pipeline/reports/` is gitignored — add it to `.gitignore` if not already.
@@ -35,7 +35,8 @@ Will invokes this with `/probe-tmdb` when:
 ### Preflight (always run first; abort the skill if it fails)
 
 1. **Check for the API key.** In order:
-   - Look for a `TMDB_API_KEY=...` line in `pipeline/.env`
+   - Look for a `TMDB_API_KEY=...` line in `pipeline/.env.local`
+   - Otherwise look in `pipeline/.env`
    - Otherwise check the process environment `$TMDB_API_KEY`
 
    If found, proceed to step 3.
@@ -43,12 +44,12 @@ Will invokes this with `/probe-tmdb` when:
 2. **If not found, ask Will for the key.**
    > "No `TMDB_API_KEY` found in `pipeline/.env` or your environment. Paste your TMDB v3 API key (get one at https://www.themoviedb.org/settings/api)."
 
-   On receipt, append `TMDB_API_KEY=<key>` to `pipeline/.env` (create the file if missing) using the **Write / Edit** tools — *not* `echo "..." >> .env`, since that surfaces the key in shell-command transcripts. Do **not** echo the key back to chat. `.env` is gitignored (`.env` is in the repo `.gitignore`).
+   On receipt, append `TMDB_API_KEY=<key>` to `pipeline/.env.local` (create the file if missing) using the **Write / Edit** tools — *not* `echo "..." >> .env.local`, since that surfaces the key in shell-command transcripts. Do **not** echo the key back to chat. `.env.local` is gitignored.
 
 3. **Reachability check.** Ping TMDB with the loaded key:
 
    ```bash
-   set -a; source pipeline/.env; set +a
+   set -a; source pipeline/.env.local 2>/dev/null; source pipeline/.env 2>/dev/null; set +a
    curl -s -o /dev/null -w "%{http_code}\n" \
      "https://api.themoviedb.org/3/configuration?api_key=$TMDB_API_KEY"
    ```
@@ -67,9 +68,20 @@ Will invokes this with `/probe-tmdb` when:
 ### Query workflow
 
 4. **Read the boilerplate query catalog below.** If Will hasn't said what he wants, list the catalog and ask which to run, or whether to compose a new one.
-5. **Create or edit `pipeline/scripts/get_films.py`** to issue the selected query/queries. Reads `TMDB_API_KEY` from `pipeline/.env` via `python-dotenv`. Uses `httpx`.
-6. **Run the script** via uv: `cd pipeline && uv run python scripts/get_films.py`.
-7. **Open `pipeline/reports/film-report.md`** and show Will the table. Ask if he wants to refine and re-run.
+5. **Run the committed script** via uv — do **not** rewrite `get_films.py`. Pick the
+   right CLI invocation based on what Will asked for:
+   ```bash
+   cd pipeline && uv run python scripts/get_films.py                       # all presets
+   cd pipeline && uv run python scripts/get_films.py canon-quality         # one preset
+   cd pipeline && uv run python scripts/get_films.py --pages 3             # more pages
+   cd pipeline && uv run python scripts/get_films.py --lang ko ja          # ad-hoc languages
+   cd pipeline && uv run python scripts/get_films.py --era 1960 1970       # ad-hoc decades
+   cd pipeline && uv run python scripts/get_films.py --params 'vote_count.gte=200&sort_by=popularity.desc'
+   ```
+   If Will asks for a query shape the CLI doesn't support, add a new preset to
+   the `PRESETS` dict in the script (or a new CLI flag if needed) rather than
+   regenerating the file.
+6. **Open `pipeline/reports/film-report.md`** and show Will the table. Ask if he wants to refine and re-run.
 
 ## Output contract — `film-report.md`
 
@@ -135,53 +147,16 @@ Edit freely. Each entry has a name, description, and the discover params used.
 | `with_runtime.gte` / `lte` | Minutes | Exclude shorts or epics |
 | `page` | 1-based | 20 per page; total pages capped at 500 |
 
-## Script shape (for `get_films.py`)
+## Script reference
 
-Outline only — the skill generates/edits the actual file each run.
+The committed script at `pipeline/scripts/get_films.py` is a full CLI tool.
+Do **not** replace it — extend it if needed. Key internals:
 
-```python
-# pipeline/scripts/get_films.py
-"""Probe TMDB /discover/movie. Writes pipeline/reports/film-report.md.
-
-Driven by the probe-tmdb skill. Edit the QUERIES list (or let the skill
-edit it for you) and re-run.
-"""
-import os, httpx
-from datetime import date
-from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).parent.parent / ".env")
-TMDB_KEY = os.environ["TMDB_API_KEY"]
-BASE = "https://api.themoviedb.org/3"
-
-QUERIES = [
-    {"name": "canon-quality", "params": {
-        "vote_count.gte": 500,
-        "vote_average.gte": 7.5,
-        "sort_by": "vote_average.desc",
-        "primary_release_date.lte": "2025-12-31",
-    }},
-    # ... add more from the catalog above
-]
-
-def fetch(params):
-    r = httpx.get(f"{BASE}/discover/movie",
-                  params={**params, "api_key": TMDB_KEY})
-    r.raise_for_status()
-    return r.json()
-
-def format_row(film, genres_lookup):
-    return (f"| {film['rank']} | {film['title']} | "
-            f"{film['release_date'][:4] if film.get('release_date') else '—'} | "
-            f"{film.get('original_language', '—')} | "
-            f"{film.get('vote_average', '—'):.1f} | "
-            f"{film.get('vote_count', '—')} | "
-            f"{', '.join(genres_lookup.get(g, str(g)) for g in film.get('genre_ids', []))} | "
-            f"{film.get('origin_country', ['—'])[0] if film.get('origin_country') else '—'} |")
-
-# ... assemble report, write to pipeline/reports/film-report.md
-```
+- **`PRESETS` dict** — mirrors the boilerplate catalog below. Add new presets here.
+- **`expand_queries()`** — handles multi-call presets (`per-language`, `era-sweep`).
+- **`resolve_queries()`** — maps CLI args to `(name, params, description)` triples.
+- **`--params`** — accepts raw query-string for one-off custom probes.
+- **`--stdout`** — prints to terminal instead of writing the report file.
 
 ## Notes for Will (edit this skill freely as preferences change)
 
