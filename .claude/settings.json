@@ -1,0 +1,20 @@
+{
+  "attribution": {
+    "commit": ""
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(gh pr create*)",
+            "command": "echo '{\"systemMessage\":\"⚠️ Have you updated CLAUDE.md to reflect your changes? Review it before creating the PR.\"}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
