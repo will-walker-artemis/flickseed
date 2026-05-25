@@ -61,20 +61,20 @@ If the user gives a vague answer ("just show me some stuff"), suggest starting
 with `canon-quality` or ask them to name a few films that feel like what they
 want — then work backward to filters.
 
-### 3. Run the query
+### 3. Run the query (discover mode)
 
-Use `pipeline/scripts/get_films.py` — do **not** rewrite it. Pick the right
-CLI invocation based on what the user asked for:
+Use `pipeline/scripts/get_films.py` in **discover mode** (the default) — do
+**not** rewrite it. Discover mode is fast: it fetches ~25-40 films (first 2
+pages) with no per-film API calls. Pick the right CLI invocation:
 
 ```bash
 cd pipeline && uv run python scripts/get_films.py canon-quality              # preset
-cd pipeline && uv run python scripts/get_films.py --pages 3                  # more pages
 cd pipeline && uv run python scripts/get_films.py --lang ko ja               # ad-hoc languages
 cd pipeline && uv run python scripts/get_films.py --era 1960 1970            # ad-hoc decades
 cd pipeline && uv run python scripts/get_films.py --params 'with_genres=878&vote_count.gte=100&vote_average.gte=7.5&sort_by=vote_average.desc'
 ```
 
-Save results with `-o reports/<descriptive-name>.md` so different pulls can be
+Save results with `-o reports/<descriptive-name>` so different pulls can be
 compared side by side. Don't use `--stdout` — always save to a file so the
 user can find results later in `pipeline/reports/`.
 
@@ -109,11 +109,21 @@ Keep iterating until the user is happy with the shape of the data. Each cycle:
 run → read → discuss → refine. Save each pull to a different file so nothing
 gets lost.
 
-### 7. When the user is satisfied
+### 7. Finalize the seed set
 
-Once a query (or combination) feels right, explain the next step: that query
-gets committed into `pipeline/flickseed_pipeline/ingest/`, and from there the
-`/embed-films` skill takes over for enrichment and embedding.
+When the user is satisfied with the query shape:
+
+1. Confirm which presets/params to use for the final export
+2. Ask about size: "How many films do you want in the seed set? (e.g. 150, or 'all')"
+3. Run the script in **finalize mode** — this fetches all pages, keywords, and
+   credits (director, writers, DP, composer, editor) per film:
+   ```bash
+   cd pipeline && uv run python scripts/get_films.py --mode finalize [presets/params] --size 150 --yes -o ../data/raw/films
+   ```
+4. Read the resulting CSV and report its shape (row count, sample keywords/crew)
+5. Explain the next step: `uv run python -m flickseed_pipeline.enrich` parses
+   the CSV into `data/raw/keywords.json` and `data/raw/credits.json` for the
+   embedding pipeline. No additional API calls needed.
 
 ## Available presets
 
@@ -165,9 +175,9 @@ Do **not** replace it — extend if needed. Key internals:
 
 ## Notes
 
-- Discover returns 20 per page. For more results, use `--pages N`.
-- This skill does **not** call `/keywords`, `/credits`, or `/recommendations`.
-  That's the enrichment phase — see `/embed-films`.
-- Once a query is committed in `pipeline/flickseed_pipeline/ingest/`, this
-  skill stops being load-bearing — it's only for the exploration phase.
+- Discover mode returns ~25-40 films (2 pages). Finalize mode fetches all pages.
+- Discover mode makes no per-film API calls. Finalize mode calls `/keywords`
+  and `/credits` per film — this is the only time TMDB enrichment happens.
+- Once finalized, the CSV at `data/raw/films.csv` is the authoritative seed
+  artifact. The enrich stage just parses it into JSON.
 - The presets are meant to evolve. Add queries that worked; remove ones that didn't.

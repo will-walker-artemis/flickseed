@@ -1,13 +1,9 @@
-"""Enrich: per-film TMDB endpoint pulls, cached under data/raw/.
+"""Enrich: parse the finalized CSV into structured JSON for embedding.
 
-Reads data/raw/films.json (from ingest/) and for each film fetches:
-  /movie/<id>/keywords         -> data/raw/keywords.json
-  /movie/<id>/credits          -> data/raw/credits.json
-  /movie/<id>/recommendations  -> data/raw/recommendations.json
+Reads data/raw/films.csv (produced by `get_films.py --mode finalize`) and
+extracts per-film data into files consumed by downstream stages:
+  keywords -> data/raw/keywords.json   (multi-hot -> PCA in embed/)
+  credits  -> data/raw/credits.json    (co-occurrence -> PCA in embed/)
 
-Cache-on-disk; re-runs skip endpoints already fetched unless --refresh.
-Feeds the multi-view embedding stage (PROJECT.md §5):
-  keywords -> multi-hot -> PCA
-  credits  -> sparse co-occurrence -> PCA
-  recs     -> directed graph -> node2vec
+No API calls — all data is already in the CSV.
 """
