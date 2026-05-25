@@ -1,10 +1,15 @@
-"""Ingest: run the canonical TMDB /discover query, write data/raw/films.json.
+"""Ingest: run the canonical TMDB /discover queries, write data/raw/films.json.
 
-The seed query is the output of the /data-discovery-tmdb skill: iterate via
-pipeline/scripts/get_films.py until results feel right, then bake the chosen
-filter parameters into this package as the committed canonical query.
+Canonical queries live in `queries.py` as a list of `DiscoverQuery`
+dataclasses (label + description + raw /discover params). The orchestrator
+in `__main__.py` pages through each, dedupes by tmdb_id, and writes the
+union with per-film slice provenance.
 
-Downstream stages (enrich/, embed/) read films.json.
+Iterate on candidate queries via the /data-discovery-tmdb skill, then
+codify the chosen params as a new entry in QUERIES.
+
+Usage:
+    uv run python -m flickseed_pipeline.ingest
 
 TMDB v3 reference:
   base:            https://api.themoviedb.org/3

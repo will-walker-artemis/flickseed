@@ -130,7 +130,7 @@ flickseed/
 │       └── diagnose_embeddings.py ← (stub)
 │
 ├── data/
-│   ├── raw/                       ← gitignored (large, regenerable)
+│   ├── raw/                       ← committed (TMDB /discover output + per-film enrichment)
 │   ├── corpus/                    ← committed (TMDB overview + optional notes)
 │   ├── derived/                   ← committed (embeddings, stations, graph)
 │   └── layout.json                ← committed, the contract
