@@ -1,19 +1,21 @@
-"""Probe TMDB /discover/movie. Writes pipeline/reports/film-report.md.
+"""Probe TMDB /discover/movie. Writes a markdown report + full CSV.
 
-Used by the probe-tmdb skill AND as a standalone CLI:
+The report shows the first 20 films per query for quick scanning.
+The CSV contains ALL matching films across all pages.
 
     uv run python scripts/get_films.py                     # run all preset queries
     uv run python scripts/get_films.py canon-quality       # run one preset
     uv run python scripts/get_films.py long-tail era-sweep # run several
-    uv run python scripts/get_films.py --pages 3           # fetch 3 pages per query (default 1)
     uv run python scripts/get_films.py --lang ko ja        # ad-hoc per-language probe
     uv run python scripts/get_films.py --era 1960 1970     # ad-hoc era sweep for specific decades
     uv run python scripts/get_films.py --params 'vote_count.gte=200&sort_by=popularity.desc'
+    uv run python scripts/get_films.py --no-csv            # skip CSV, report only
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 import os
 import sys
 from datetime import date
@@ -107,13 +109,25 @@ def fetch_genres(client: httpx.Client, api_key: str) -> dict[int, str]:
     return GENRE_CACHE
 
 
-def discover(client: httpx.Client, api_key: str, params: dict, page: int = 1) -> dict:
+def discover_page(client: httpx.Client, api_key: str, params: dict, page: int = 1) -> dict:
     r = client.get(
         f"{BASE}/discover/movie",
         params={**params, "api_key": api_key, "page": page},
     )
     r.raise_for_status()
     return r.json()
+
+
+def discover_all(client: httpx.Client, api_key: str, params: dict) -> tuple[list[dict], int]:
+    """Fetch all pages for a query. Returns (films, total_results)."""
+    first = discover_page(client, api_key, params, page=1)
+    films = list(first.get("results", []))
+    total = first.get("total_results", 0)
+    total_pages = min(first.get("total_pages", 1), 500)
+    for page in range(2, total_pages + 1):
+        data = discover_page(client, api_key, params, page=page)
+        films.extend(data.get("results", []))
+    return films, total
 
 # ---------------------------------------------------------------------------
 # Query expansion
@@ -158,8 +172,14 @@ def format_table(films: list[dict], genres: dict[int, str]) -> str:
     return "\n".join(rows)
 
 
-def build_report(sections: list[dict]) -> str:
+REPORT_PREVIEW = 20
+
+
+def build_report(sections: list[dict], csv_path: str | None = None) -> str:
     lines = [f"# TMDB Probe Report — {date.today().isoformat()}", ""]
+    if csv_path:
+        lines.append(f"Full data: `{csv_path}`")
+        lines.append("")
     for s in sections:
         lines.append(f"## Query: {s['name']}")
         if s.get("description"):
@@ -167,11 +187,37 @@ def build_report(sections: list[dict]) -> str:
         lines.append(f"**Endpoint:** GET /3/discover/movie")
         param_str = "&".join(f"{k}={v}" for k, v in s["params"].items())
         lines.append(f"**Params:** `{param_str}`")
-        lines.append(f"**Returned:** {s['count']} of {s['total']}")
+        lines.append(f"**Total:** {s['total']} films (showing first {min(REPORT_PREVIEW, s['total'])})")
         lines.append("")
         lines.append(s["table"])
         lines.append("")
     return "\n".join(lines)
+
+
+def write_csv(sections: list[dict], genres: dict[int, str], csv_path: Path) -> int:
+    """Write all films from all sections to a single CSV. Returns total row count."""
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = ["query", "tmdb_id", "title", "year", "language", "vote_average", "vote_count", "genres", "country", "overview"]
+    total_rows = 0
+    with open(csv_path, "w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        for s in sections:
+            for f in s["all_films"]:
+                writer.writerow({
+                    "query": s["name"],
+                    "tmdb_id": f.get("id", ""),
+                    "title": f.get("title", ""),
+                    "year": f["release_date"][:4] if f.get("release_date") else "",
+                    "language": f.get("original_language", ""),
+                    "vote_average": f.get("vote_average", ""),
+                    "vote_count": f.get("vote_count", ""),
+                    "genres": ", ".join(genres.get(g, str(g)) for g in f.get("genre_ids", [])),
+                    "country": f["origin_country"][0] if f.get("origin_country") else "",
+                    "overview": f.get("overview", ""),
+                })
+                total_rows += 1
+    return total_rows
 
 # ---------------------------------------------------------------------------
 # CLI
@@ -189,10 +235,6 @@ def parse_args() -> argparse.Namespace:
         help="Preset names to run (default: all presets).",
     )
     p.add_argument(
-        "--pages", type=int, default=1,
-        help="Pages to fetch per query (20 results/page). Default: 1.",
-    )
-    p.add_argument(
         "--lang", nargs="+", metavar="CODE",
         help="Ad-hoc per-language probe (ISO 639-1 codes). Overrides per-language preset languages.",
     )
@@ -207,6 +249,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "-o", "--output", type=Path, default=REPORT_PATH,
         help=f"Report output path. Default: {REPORT_PATH.relative_to(ROOT)}",
+    )
+    p.add_argument(
+        "--no-csv", action="store_true",
+        help="Skip CSV export, only write the markdown report.",
     )
     p.add_argument(
         "--stdout", action="store_true",
@@ -259,23 +305,30 @@ def main() -> None:
     with httpx.Client(timeout=30) as client:
         genres = fetch_genres(client, api_key)
         for name, params, description in queries:
-            all_films: list[dict] = []
-            total = 0
-            for page in range(1, args.pages + 1):
-                data = discover(client, api_key, params, page=page)
-                total = data.get("total_results", 0)
-                all_films.extend(data.get("results", []))
-            print(f"  {name}: {len(all_films)} films (of {total} total)")
+            all_films, total = discover_all(client, api_key, params)
+            print(f"  {name}: {len(all_films)} films")
             sections.append({
                 "name": name,
                 "description": description,
                 "params": params,
-                "count": len(all_films),
                 "total": total,
-                "table": format_table(all_films, genres),
+                "all_films": all_films,
+                "table": format_table(all_films[:REPORT_PREVIEW], genres),
             })
 
-    report = build_report(sections)
+    # CSV — full data
+    csv_label = None
+    if not args.no_csv and not args.stdout:
+        csv_path = args.output.resolve().with_suffix(".csv")
+        row_count = write_csv(sections, genres, csv_path)
+        try:
+            csv_label = str(csv_path.relative_to(ROOT))
+        except ValueError:
+            csv_label = str(csv_path)
+        print(f"  CSV: {row_count} rows → {csv_label}")
+
+    # Markdown report — first 20 per query
+    report = build_report(sections, csv_path=csv_label)
 
     if args.stdout:
         print(report)
@@ -287,7 +340,7 @@ def main() -> None:
             label = out.relative_to(ROOT)
         except ValueError:
             label = out
-        print(f"\nReport written to {label}")
+        print(f"  Report: {label}")
 
 
 if __name__ == "__main__":

@@ -35,13 +35,19 @@ uv run python scripts/get_films.py
 uv run python scripts/get_films.py --params 'with_genres=878&vote_count.gte=100&vote_average.gte=7.5&sort_by=vote_average.desc'
 ```
 
-Reports are saved to `pipeline/reports/film-report.md` by default. Use `-o` to
-save to a different file, or `--stdout` to print to the terminal (does **not**
-also save to file).
+Each run produces two files:
+- **Markdown report** (first 20 films per query) — for quick scanning
+- **CSV** (all matching films) — full data including overviews
+
+Both default to `pipeline/reports/film-report.{md,csv}`. Use `-o` to change
+the base path, or `--stdout` to print the report to the terminal only.
 
 ```bash
-# Save to a named file
-uv run python scripts/get_films.py --params '...' -o reports/scifi-100.md
+# Save to named files (creates scifi.md + scifi.csv)
+uv run python scripts/get_films.py --params '...' -o reports/scifi.md
+
+# Report only, no CSV
+uv run python scripts/get_films.py --params '...' --no-csv
 
 # Print to terminal only (nothing saved)
 uv run python scripts/get_films.py --params '...' --stdout
@@ -109,9 +115,9 @@ concept of taste or recommendations — it only knows metadata.
 
 | Flag | What it does |
 |---|---|
-| `--pages N` | Fetch N pages (20 films per page, default 1) |
-| `-o PATH` | Save report to a specific file |
-| `--stdout` | Print to terminal instead of saving |
+| `-o PATH` | Save report + CSV to a specific base path (e.g. `-o reports/scifi.md` creates `scifi.md` + `scifi.csv`) |
+| `--no-csv` | Skip CSV export, only write the markdown report |
+| `--stdout` | Print report to terminal instead of saving (no CSV) |
 | `--lang CODE [CODE ...]` | Ad-hoc per-language pulls (e.g. `--lang ko ja`) |
 | `--era DECADE [DECADE ...]` | Ad-hoc per-decade pulls (e.g. `--era 1960 1970`) |
 
