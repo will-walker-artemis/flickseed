@@ -1,4 +1,4 @@
-# Flickseed
+# Flickseed (WIP)
 
 A cinematic subway-map of films. Stations are concepts (mood, texture, register);
 films are listed in a side panel when you click a station. Lines are curated
