@@ -18,6 +18,9 @@ dependencies = [
     "sentence-transformers>=3.0",
     "networkx>=3.0",
     "node2vec>=0.4",
+    # Clustering (cluster stage)
+    "bertopic>=0.16",
+    "hdbscan>=0.8",
     # Visualization (diagnostic plots)
     "plotly>=5.0",
     "umap-learn>=0.5",

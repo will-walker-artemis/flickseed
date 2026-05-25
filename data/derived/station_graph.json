@@ -1,0 +1,813 @@
+{
+  "n_stations": 32,
+  "n_edges": 84,
+  "k": 8,
+  "nodes": [
+    {
+      "id": 0,
+      "keywords": [
+        "planet",
+        "space",
+        "interstellar",
+        "live",
+        "use"
+      ],
+      "size": 8,
+      "degree": 5
+    },
+    {
+      "id": 1,
+      "keywords": [
+        "hero",
+        "job",
+        "dragon",
+        "heroes",
+        "super"
+      ],
+      "size": 7,
+      "degree": 7
+    },
+    {
+      "id": 2,
+      "keywords": [
+        "robot",
+        "company",
+        "unexpected",
+        "worlds",
+        "giant"
+      ],
+      "size": 6,
+      "degree": 5
+    },
+    {
+      "id": 3,
+      "keywords": [
+        "animals",
+        "robot",
+        "stranded",
+        "way",
+        "abilities"
+      ],
+      "size": 6,
+      "degree": 2
+    },
+    {
+      "id": 4,
+      "keywords": [
+        "hacker",
+        "organization",
+        "britain",
+        "known",
+        "ally"
+      ],
+      "size": 7,
+      "degree": 8
+    },
+    {
+      "id": 5,
+      "keywords": [
+        "town",
+        "legendary",
+        "hopes",
+        "female",
+        "following"
+      ],
+      "size": 7,
+      "degree": 5
+    },
+    {
+      "id": 6,
+      "keywords": [
+        "park",
+        "steven spielberg",
+        "extraterrestrial",
+        "little",
+        "prey"
+      ],
+      "size": 7,
+      "degree": 6
+    },
+    {
+      "id": 7,
+      "keywords": [
+        "moon",
+        "world",
+        "robot",
+        "poor",
+        "factory"
+      ],
+      "size": 6,
+      "degree": 4
+    },
+    {
+      "id": 8,
+      "keywords": [
+        "henry",
+        "join forces",
+        "need",
+        "teen",
+        "join"
+      ],
+      "size": 5,
+      "degree": 8
+    },
+    {
+      "id": 9,
+      "keywords": [
+        "sarah",
+        "stop",
+        "love",
+        "james cameron",
+        "cameron"
+      ],
+      "size": 5,
+      "degree": 6
+    },
+    {
+      "id": 10,
+      "keywords": [
+        "japan",
+        "monster",
+        "island",
+        "emerges",
+        "vs"
+      ],
+      "size": 5,
+      "degree": 2
+    },
+    {
+      "id": 11,
+      "keywords": [
+        "memories",
+        "memory",
+        "unexpected",
+        "history",
+        "crime"
+      ],
+      "size": 6,
+      "degree": 8
+    },
+    {
+      "id": 12,
+      "keywords": [
+        "powers",
+        "forces",
+        "future",
+        "past",
+        "abilities"
+      ],
+      "size": 4,
+      "degree": 4
+    },
+    {
+      "id": 13,
+      "keywords": [
+        "girl",
+        "era",
+        "rescue",
+        "falls",
+        "existence"
+      ],
+      "size": 4,
+      "degree": 6
+    },
+    {
+      "id": 14,
+      "keywords": [
+        "masayuki",
+        "humankind",
+        "far",
+        "end",
+        "project"
+      ],
+      "size": 4,
+      "degree": 1
+    },
+    {
+      "id": 15,
+      "keywords": [
+        "game",
+        "users",
+        "fun",
+        "player",
+        "developed"
+      ],
+      "size": 4,
+      "degree": 5
+    },
+    {
+      "id": 16,
+      "keywords": [
+        "killer",
+        "face",
+        "lifelike",
+        "jack",
+        "aliens"
+      ],
+      "size": 5,
+      "degree": 8
+    },
+    {
+      "id": 17,
+      "keywords": [
+        "villeneuve",
+        "denis",
+        "denis villeneuve",
+        "paul",
+        "universe"
+      ],
+      "size": 4,
+      "degree": 4
+    },
+    {
+      "id": 18,
+      "keywords": [
+        "scientist",
+        "creature",
+        "james",
+        "liberation",
+        "escape"
+      ],
+      "size": 4,
+      "degree": 3
+    },
+    {
+      "id": 19,
+      "keywords": [
+        "tomorrow",
+        "combat",
+        "alien",
+        "hunted",
+        "dan"
+      ],
+      "size": 6,
+      "degree": 5
+    },
+    {
+      "id": 20,
+      "keywords": [
+        "star",
+        "inside",
+        "crew",
+        "alien",
+        "team"
+      ],
+      "size": 3,
+      "degree": 5
+    },
+    {
+      "id": 21,
+      "keywords": [
+        "daniel",
+        "wrong",
+        "universes",
+        "best",
+        "connected"
+      ],
+      "size": 3,
+      "degree": 8
+    },
+    {
+      "id": 22,
+      "keywords": [
+        "dead",
+        "george",
+        "daffy",
+        "refuge",
+        "determined save"
+      ],
+      "size": 3,
+      "degree": 4
+    },
+    {
+      "id": 23,
+      "keywords": [
+        "past",
+        "personality",
+        "isnt",
+        "tatsuya",
+        "struggling"
+      ],
+      "size": 3,
+      "degree": 7
+    },
+    {
+      "id": 24,
+      "keywords": [
+        "life",
+        "able",
+        "just",
+        "chance",
+        "broken"
+      ],
+      "size": 3,
+      "degree": 6
+    },
+    {
+      "id": 25,
+      "keywords": [
+        "dog",
+        "human",
+        "soviet",
+        "humorous",
+        "transformed"
+      ],
+      "size": 4,
+      "degree": 8
+    },
+    {
+      "id": 26,
+      "keywords": [
+        "cameron",
+        "james cameron",
+        "james",
+        "fight",
+        "family"
+      ],
+      "size": 3,
+      "degree": 3
+    },
+    {
+      "id": 27,
+      "keywords": [
+        "alex",
+        "agency",
+        "option",
+        "commodity",
+        "destroying"
+      ],
+      "size": 3,
+      "degree": 7
+    },
+    {
+      "id": 28,
+      "keywords": [
+        "nuclear",
+        "virus",
+        "sent",
+        "mental",
+        "eventual"
+      ],
+      "size": 3,
+      "degree": 4
+    },
+    {
+      "id": 29,
+      "keywords": [
+        "batman",
+        "knight",
+        "alternate",
+        "dark",
+        "returns"
+      ],
+      "size": 3,
+      "degree": 4
+    },
+    {
+      "id": 30,
+      "keywords": [
+        "things",
+        "face",
+        "future",
+        "inventor",
+        "duo"
+      ],
+      "size": 3,
+      "degree": 2
+    },
+    {
+      "id": 31,
+      "keywords": [
+        "race",
+        "fantastic",
+        "connected",
+        "metal",
+        "hands"
+      ],
+      "size": 6,
+      "degree": 8
+    }
+  ],
+  "edges": [
+    {
+      "source": 0,
+      "target": 17,
+      "similarity": 0.1039
+    },
+    {
+      "source": 0,
+      "target": 19,
+      "similarity": 0.1419
+    },
+    {
+      "source": 0,
+      "target": 20,
+      "similarity": 0.3022
+    },
+    {
+      "source": 0,
+      "target": 26,
+      "similarity": 0.0745
+    },
+    {
+      "source": 0,
+      "target": 27,
+      "similarity": 0.1175
+    },
+    {
+      "source": 1,
+      "target": 4,
+      "similarity": 0.2318
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "similarity": 0.374
+    },
+    {
+      "source": 1,
+      "target": 8,
+      "similarity": 0.1857
+    },
+    {
+      "source": 1,
+      "target": 12,
+      "similarity": 0.1024
+    },
+    {
+      "source": 1,
+      "target": 13,
+      "similarity": 0.1787
+    },
+    {
+      "source": 1,
+      "target": 15,
+      "similarity": 0.3114
+    },
+    {
+      "source": 1,
+      "target": 23,
+      "similarity": 0.3241
+    },
+    {
+      "source": 2,
+      "target": 6,
+      "similarity": 0.1716
+    },
+    {
+      "source": 2,
+      "target": 7,
+      "similarity": 0.2458
+    },
+    {
+      "source": 2,
+      "target": 19,
+      "similarity": 0.1755
+    },
+    {
+      "source": 2,
+      "target": 24,
+      "similarity": 0.1495
+    },
+    {
+      "source": 2,
+      "target": 27,
+      "similarity": 0.1998
+    },
+    {
+      "source": 3,
+      "target": 12,
+      "similarity": 0.2206
+    },
+    {
+      "source": 3,
+      "target": 22,
+      "similarity": 0.1322
+    },
+    {
+      "source": 4,
+      "target": 5,
+      "similarity": 0.2692
+    },
+    {
+      "source": 4,
+      "target": 9,
+      "similarity": 0.2633
+    },
+    {
+      "source": 4,
+      "target": 14,
+      "similarity": 0.1361
+    },
+    {
+      "source": 4,
+      "target": 15,
+      "similarity": 0.1884
+    },
+    {
+      "source": 4,
+      "target": 23,
+      "similarity": 0.1437
+    },
+    {
+      "source": 4,
+      "target": 27,
+      "similarity": 0.091
+    },
+    {
+      "source": 4,
+      "target": 29,
+      "similarity": 0.0954
+    },
+    {
+      "source": 5,
+      "target": 9,
+      "similarity": 0.0855
+    },
+    {
+      "source": 5,
+      "target": 15,
+      "similarity": 0.2218
+    },
+    {
+      "source": 5,
+      "target": 23,
+      "similarity": 0.196
+    },
+    {
+      "source": 6,
+      "target": 8,
+      "similarity": 0.1794
+    },
+    {
+      "source": 6,
+      "target": 19,
+      "similarity": 0.4024
+    },
+    {
+      "source": 6,
+      "target": 20,
+      "similarity": 0.2269
+    },
+    {
+      "source": 6,
+      "target": 25,
+      "similarity": 0.3101
+    },
+    {
+      "source": 6,
+      "target": 31,
+      "similarity": 0.2785
+    },
+    {
+      "source": 7,
+      "target": 16,
+      "similarity": 0.2178
+    },
+    {
+      "source": 7,
+      "target": 18,
+      "similarity": 0.1633
+    },
+    {
+      "source": 7,
+      "target": 24,
+      "similarity": 0.1487
+    },
+    {
+      "source": 8,
+      "target": 11,
+      "similarity": 0.1828
+    },
+    {
+      "source": 8,
+      "target": 12,
+      "similarity": 0.4832
+    },
+    {
+      "source": 8,
+      "target": 21,
+      "similarity": 0.2263
+    },
+    {
+      "source": 8,
+      "target": 22,
+      "similarity": 0.2097
+    },
+    {
+      "source": 8,
+      "target": 25,
+      "similarity": 0.3373
+    },
+    {
+      "source": 8,
+      "target": 31,
+      "similarity": 0.3963
+    },
+    {
+      "source": 9,
+      "target": 17,
+      "similarity": 0.1801
+    },
+    {
+      "source": 9,
+      "target": 26,
+      "similarity": 0.0525
+    },
+    {
+      "source": 9,
+      "target": 27,
+      "similarity": 0.0842
+    },
+    {
+      "source": 9,
+      "target": 29,
+      "similarity": 0.0777
+    },
+    {
+      "source": 10,
+      "target": 16,
+      "similarity": 0.243
+    },
+    {
+      "source": 10,
+      "target": 28,
+      "similarity": 0.1109
+    },
+    {
+      "source": 11,
+      "target": 13,
+      "similarity": 0.2388
+    },
+    {
+      "source": 11,
+      "target": 16,
+      "similarity": 0.2013
+    },
+    {
+      "source": 11,
+      "target": 21,
+      "similarity": 0.3129
+    },
+    {
+      "source": 11,
+      "target": 23,
+      "similarity": 0.1819
+    },
+    {
+      "source": 11,
+      "target": 24,
+      "similarity": 0.1663
+    },
+    {
+      "source": 11,
+      "target": 25,
+      "similarity": 0.3755
+    },
+    {
+      "source": 11,
+      "target": 31,
+      "similarity": 0.4064
+    },
+    {
+      "source": 12,
+      "target": 29,
+      "similarity": 0.1689
+    },
+    {
+      "source": 13,
+      "target": 21,
+      "similarity": 0.345
+    },
+    {
+      "source": 13,
+      "target": 23,
+      "similarity": 0.1895
+    },
+    {
+      "source": 13,
+      "target": 30,
+      "similarity": 0.1754
+    },
+    {
+      "source": 13,
+      "target": 31,
+      "similarity": 0.2939
+    },
+    {
+      "source": 15,
+      "target": 23,
+      "similarity": 0.1976
+    },
+    {
+      "source": 15,
+      "target": 27,
+      "similarity": 0.0879
+    },
+    {
+      "source": 16,
+      "target": 18,
+      "similarity": 0.2558
+    },
+    {
+      "source": 16,
+      "target": 19,
+      "similarity": 0.1798
+    },
+    {
+      "source": 16,
+      "target": 21,
+      "similarity": 0.2935
+    },
+    {
+      "source": 16,
+      "target": 25,
+      "similarity": 0.3247
+    },
+    {
+      "source": 16,
+      "target": 31,
+      "similarity": 0.2981
+    },
+    {
+      "source": 17,
+      "target": 20,
+      "similarity": 0.0834
+    },
+    {
+      "source": 17,
+      "target": 27,
+      "similarity": 0.1195
+    },
+    {
+      "source": 18,
+      "target": 22,
+      "similarity": 0.1368
+    },
+    {
+      "source": 19,
+      "target": 20,
+      "similarity": 0.1961
+    },
+    {
+      "source": 20,
+      "target": 26,
+      "similarity": 0.1049
+    },
+    {
+      "source": 21,
+      "target": 24,
+      "similarity": 0.2199
+    },
+    {
+      "source": 21,
+      "target": 25,
+      "similarity": 0.4439
+    },
+    {
+      "source": 21,
+      "target": 28,
+      "similarity": 0.2272
+    },
+    {
+      "source": 21,
+      "target": 31,
+      "similarity": 0.4841
+    },
+    {
+      "source": 22,
+      "target": 25,
+      "similarity": 0.3089
+    },
+    {
+      "source": 23,
+      "target": 30,
+      "similarity": 0.0883
+    },
+    {
+      "source": 24,
+      "target": 28,
+      "similarity": 0.2283
+    },
+    {
+      "source": 24,
+      "target": 31,
+      "similarity": 0.2498
+    },
+    {
+      "source": 25,
+      "target": 28,
+      "similarity": 0.3062
+    },
+    {
+      "source": 25,
+      "target": 31,
+      "similarity": 0.5897
+    },
+    {
+      "source": 27,
+      "target": 29,
+      "similarity": 0.1067
+    }
+  ]
+}
