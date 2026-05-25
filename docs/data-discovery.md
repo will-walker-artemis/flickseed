@@ -79,6 +79,42 @@ uv run python scripts/get_films.py --params 'with_genres=878&vote_count.gte=100&
 uv run python scripts/get_films.py --params 'with_genres=18&with_original_language=ko&primary_release_date.gte=2010-01-01&primary_release_date.lte=2020-01-01&vote_count.gte=100&sort_by=vote_average.desc'
 ```
 
+## Worked example: tightening a noisy genre pull
+
+Genre alone tends to surface blockbusters at the top of the rating sort because
+they accumulate disproportionate vote counts. A typical iteration that turns
+"genre + quality" into a usable seed slice looks like this (sci-fi shown, but
+the pattern generalises):
+
+| Step | Added filter | Total |
+|---|---|---|
+| Baseline (genre + open quality) | `with_genres=878&vote_count.gte=200&vote_average.gte=7.0&sort_by=vote_average.desc` | 421 |
+| Exclude one franchise studio | `&without_companies=420` (Marvel Studios = MCU) | ~395 |
+| Tighten obscurity gate | `vote_count.gte=300` | ~270 |
+| Tighten quality floor | `vote_average.gte=7.5` | **122** |
+
+Each filter typically halves the result or so. The exact numbers drift as TMDB
+vote counts update; the *shape* of the iteration is what generalises:
+
+1. Strip franchise / studio bias with `without_companies` first — it's the
+   fastest way to clean up "all the top films are from one shared universe."
+2. Raise `vote_count.gte` to drop noise.
+3. Raise `vote_average.gte` to lift canon.
+
+### Production company IDs
+
+Look up any company via `/search/company?query=...`. A few useful ones:
+
+| ID | Company |
+|---|---|
+| 420 | Marvel Studios (MCU) |
+| 1 | Lucasfilm |
+| 3 | Pixar |
+| 2 | Walt Disney Pictures |
+| 33 | Universal Pictures |
+| 25 | 20th Century Fox |
+| 174 | Warner Bros. Pictures |
+
 ## TMDB filter reference
 
 TMDB's `/discover/movie` is a filter+sort over their entire database. It has no
@@ -95,6 +131,8 @@ concept of taste or recommendations — it only knows metadata.
 | `sort_by` | Ranking | `vote_average.desc`, `popularity.desc`, `vote_count.desc` |
 | `with_keywords` | TMDB keyword IDs | Look up via `/search/keyword` |
 | `with_runtime.gte/lte` | Runtime in minutes | Exclude shorts or epics |
+| `with_companies` | Include production company IDs | Comma-separated. Look up via `/search/company` |
+| `without_companies` | Exclude production company IDs | Comma-separated. Strips franchise/studio bias (e.g. MCU = 420) |
 
 ### Genre IDs
 
@@ -131,8 +169,18 @@ concept of taste or recommendations — it only knows metadata.
 - **Combine strategies.** Union multiple pulls — e.g. a quality backbone +
   language-specific pulls + genre-targeted pulls — rather than looking for one
   magic query.
-- **Reports are disposable.** `pipeline/reports/` is gitignored. Run as many
-  pulls as you want; use `-o` with descriptive names to compare side by side.
+- **Strip franchise bias early.** `without_companies` is the fastest way to
+  clean up a sort that's dominated by one studio's shared universe (MCU, Star
+  Wars, Pixar). Faster than raising the quality floor, doesn't lose canon.
+- **The top 20 lies.** The markdown report only shows the first 20 rows but
+  the CSV has everything. The middle and tail of a query (ranks ~50–120)
+  often have the texture you actually want — deep canon, foreign cinema,
+  pre-1970 films TMDB undervotes. Sample the tail before deciding the query is
+  off; sometimes the query is fine and the report is misleading.
+- **Comparing pulls.** `pipeline/reports/` is no longer gitignored — committed
+  reports are useful for showing how a query evolved. Use `-o` with descriptive
+  names (e.g. `reports/scifi-002.md`) so successive iterations sit side by
+  side rather than overwriting `film-report.md`.
 
 ## What happens next
 
