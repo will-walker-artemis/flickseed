@@ -102,6 +102,12 @@ After discussing, **always ask** what to change. Guide the conversation:
 - "Missing non-English films? We can run per-language pulls."
 - "Want to see deeper cuts? We can lower the vote threshold — but expect more noise."
 - "Should I exclude animation/family to cut the franchise stuff, then backfill anime separately?"
+- "Seeing concert films, TV movies, or music docs? We can exclude genres with `without_genres` — e.g. Music (10402) and TV Movie (10770) are common culprits."
+
+**Genre exclusions:** TMDB's `without_genres` param filters at the API level — add
+it to `--params` or bake it into presets. Discuss with the user which genres to
+exclude before applying; documentary (99) is sometimes desirable, so don't
+exclude it without asking.
 
 ### 6. Repeat steps 3–5
 
@@ -145,6 +151,7 @@ When the user is satisfied with the query shape:
 | `primary_release_date.gte`/`lte` | Era | YYYY-MM-DD |
 | `sort_by` | Ranking | `vote_average.desc`, `popularity.desc`, `vote_count.desc` |
 | `with_keywords` | Comma-separated keyword IDs | Look up at `/search/keyword` |
+| `without_keywords` | Exclude keyword IDs | Blocklist auto-injects MCU + TV Special |
 | `with_genres` / `without_genres` | Comma-separated genre IDs | See `docs/data-discovery.md` for full ID list |
 | `with_runtime.gte` / `lte` | Minutes | Exclude shorts or epics |
 | `page` | 1-based | 20 per page; max 500 pages |
@@ -172,6 +179,9 @@ Do **not** replace it — extend if needed. Key internals:
 - **`expand_queries()`** — handles multi-call presets (`per-language`, `era-sweep`).
 - **`resolve_queries()`** — maps CLI args to `(name, params, description)` triples.
 - **`--params`** — accepts raw query-string for one-off custom probes.
+- **`BLOCKED_KEYWORD_IDS`** — keyword IDs excluded at the API level via `without_keywords` (MCU, TV Special).
+- **`BLOCKED_FILM_IDS`** — TMDB IDs excluded post-fetch (Star Wars saga).
+- **`--no-blocklist`** — disables both layers of franchise filtering.
 
 ## Notes
 

@@ -83,8 +83,13 @@ Both skills check TMDB_API_KEY and ping the API before running.
 
 Before creating a PR, review this file and update it if your changes affect the architecture, commands, pipeline stages, key decisions, or skills documented here.
 
+## Domain Language
+
+Consult **`docs/terms.md`** for canonical definitions of all domain concepts (station, film, line, embedding views, pipeline stages, etc.). Code, naming, component boundaries, and architecture decisions should align with these definitions. If a term says what something *isn't*, treat that as a constraint.
+
 ## Reference Documents
 
 - **PROJECT.md** — source of truth for architecture, build order, and all decisions
+- **docs/terms.md** — domain glossary and design guide; align code and naming to these definitions
 - **pipeline/README.md** — operational guide for pipeline stages
 - **docs/architecture.md** — mermaid diagram
