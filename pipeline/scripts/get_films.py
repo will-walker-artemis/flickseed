@@ -139,7 +139,9 @@ def fetch_keywords(client: httpx.Client, api_key: str, film_id: int) -> list[str
             r = client.get(f"{BASE}/movie/{film_id}/keywords", params={"api_key": api_key})
         r.raise_for_status()
         return [kw["name"] for kw in r.json().get("keywords", [])]
-    except httpx.HTTPStatusError:
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code != 404:
+            print(f"    warning: keywords failed for film {film_id} (HTTP {e.response.status_code})", file=sys.stderr)
         return []
 
 
