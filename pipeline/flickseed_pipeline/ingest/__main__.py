@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 import httpx
@@ -39,11 +40,26 @@ def _api_key() -> str:
     return key
 
 
+MAX_RETRIES = 3
+
+
+def _get_with_backoff(client: httpx.Client, url: str, **kwargs) -> httpx.Response:
+    for attempt in range(MAX_RETRIES + 1):
+        resp = client.get(url, **kwargs)
+        if resp.status_code != 429:
+            return resp
+        wait = float(resp.headers.get("Retry-After", 2 ** attempt))
+        print(f"  rate-limited, retrying in {wait:.0f}s…", file=sys.stderr)
+        time.sleep(wait)
+    return resp
+
+
 def _fetch_query(client: httpx.Client, q: DiscoverQuery, api_key: str) -> list[dict]:
     results: list[dict] = []
     page = 1
     while True:
-        resp = client.get(
+        resp = _get_with_backoff(
+            client,
             f"{TMDB_BASE}/discover/movie",
             params={**q.params, "api_key": api_key, "page": str(page)},
             timeout=30.0,
