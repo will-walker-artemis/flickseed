@@ -83,7 +83,7 @@ data/derived/candidate_paths.json
         ▼  pipeline/flickseed_pipeline/export.py
 data/layout.json   ← the contract
         │
-        ├─► React renderer (app/, GitHub Pages)
+        ├─► React renderer (app/, local Vite dev server)
         └─► TouchDesigner renderer (td/, later)
 ```
 
@@ -98,26 +98,26 @@ Pipeline produces it; renderers consume it; neither renderer computes layout.
 flickseed/
 ├── README.md                      ← public-facing; what this is
 ├── PROJECT.md                     ← this file, architecture doc
+├── CLAUDE.md                      ← Claude Code orientation
 │
-├── app/                           ← React/TS app (renamed from src/)
+├── app/                           ← React/TS app
 │   ├── src/
 │   │   ├── main.tsx
 │   │   ├── App.tsx
 │   │   ├── routes/
 │   │   │   └── map/               ← the metro map view
-│   │   ├── lib/
-│   │   │   ├── layout.ts          ← loads data/layout.json
-│   │   │   └── github.ts          ← reused from old code if needed
-│   │   └── components/
+│   │   ├── lib/                   ← (planned) layout.ts loads /layout.json
+│   │   └── components/            ← (planned)
 │   ├── package.json
-│   ├── vite.config.ts
+│   ├── vite.config.ts             ← publicDir: ../data
 │   └── index.html
 │
 ├── pipeline/                      ← Python, uv-managed, self-contained
 │   ├── pyproject.toml
 │   ├── README.md
 │   ├── flickseed_pipeline/
-│   │   ├── ingest/
+│   │   ├── ingest/                ← canonical /discover query
+│   │   ├── enrich/                ← per-film TMDB endpoints
 │   │   ├── corpus/
 │   │   ├── embed/
 │   │   ├── cluster/
@@ -125,19 +125,28 @@ flickseed/
 │   │   ├── layout/
 │   │   └── export.py
 │   └── scripts/
-│       ├── run_pipeline.py
-│       └── diagnose_embeddings.py
+│       ├── get_films.py           ← TMDB /discover probe CLI
+│       ├── run_pipeline.py        ← (stub)
+│       └── diagnose_embeddings.py ← (stub)
 │
 ├── data/
-│   ├── raw/                       ← gitignored (large, regenerable)
-│   ├── corpus/                    ← committed (hand-written, the asset)
-│   ├── derived/                   ← committed (small, useful in history)
+│   ├── raw/                       ← committed (TMDB /discover output + per-film enrichment)
+│   ├── corpus/                    ← committed (TMDB overview + optional notes)
+│   ├── derived/                   ← committed (embeddings, stations, graph)
 │   └── layout.json                ← committed, the contract
+│
+├── docs/
+│   ├── architecture.md
+│   └── data-discovery.md
+│
+├── .claude/skills/
+│   ├── data-discovery-tmdb.md
+│   └── embed-films.md
 │
 ├── td/                            ← TouchDesigner files (later)
 │
 ├── .gitignore
-└── pipeline/.env.example          ← TMDB_API_KEY for ingest
+└── pipeline/.env.example          ← TMDB_API_KEY
 ```
 
 **Done in Phase 0 (commit history if you want details):**
@@ -309,7 +318,7 @@ Reads same `data/layout.json`. Provides cinematic affordances web can't.
 |---|---|---|
 | 0 | done | Strip the existing logging features; move `src/` → `app/src/`; verify build still works |
 | 0b | done | Scaffold `pipeline/` with uv; empty package; verify pipeline builds and imports |
-| 1 | 1 | TMDB ingestion via committed `/discover` seed query (iterate using `/probe-tmdb` skill, then bake the query into `pipeline/flickseed_pipeline/ingest/`) |
+| 1 | 1 | TMDB ingestion via committed `/discover` seed query (iterate using `/data-discovery-tmdb` skill, then bake the query into `pipeline/flickseed_pipeline/ingest/`) |
 | 2 | 1 | Enrichment pass — `/keywords`, `/credits`, `/recommendations` per seed (via `/embed-films` skill) |
 | 3 | 1 | Multi-view embedding (overview + keyword + crew + node2vec) + top-5 diagnostic |
 | 3b | ongoing | *Optional:* hand-write 1–2 sentence notes per film, re-embed; signal #3 in §5 |

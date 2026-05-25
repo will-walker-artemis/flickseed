@@ -74,7 +74,7 @@ Films appear in the side panel when a station is selected — they are not dots 
 
 ## Custom Skills
 
-- `/probe-tmdb` — explore TMDB /discover filter combos, outputs `pipeline/reports/film-report.md`
+- `/data-discovery-tmdb` — interactive TMDB `/discover` exploration; iterates queries with the user and writes reports under `pipeline/reports/`
 - `/embed-films` — run multi-view embedding pipeline, outputs `data/derived/embeddings.parquet` + diagnostic
 
 Both skills check TMDB_API_KEY and ping the API before running.
