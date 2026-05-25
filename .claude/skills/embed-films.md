@@ -6,12 +6,12 @@ description: Run the Flickseed representation-learning pipeline — enrich the c
 # Embed Films
 
 This skill runs the **representation-learning** stage of the Flickseed pipeline:
-ingestion → enrichment → feature extraction → embedding → graph construction →
-graph embedding → vector composition → diagnostic.
+enrichment → corpus → embedding → diagnostic.
 
 It is the second half of the data work. The first half — settling on the
 canonical TMDB `/discover` seed query — is the `data-discovery-tmdb` skill.
-Once that query is committed, this skill takes over.
+Once that query is finalized (`get_films.py --mode finalize` → `data/raw/films.csv`),
+this skill takes over.
 
 ## When to invoke
 
@@ -26,42 +26,59 @@ Will invokes this with `/embed-films` when:
 | Artifact | Path | Lifecycle |
 |---|---|---|
 | The skill | `.claude/skills/embed-films.md` (this file) | Durable — edit as the pipeline matures |
-| Pipeline script | `pipeline/scripts/enrich_and_embed.py` | Created/edited by this skill |
-| View-weight config | `pipeline/config.yaml` | Hand-edited; committed |
-| Raw enrichment | `data/raw/{films,keywords,credits,recommendations}.json` | Gitignored (large, regenerable) |
+| Enrich module | `pipeline/flickseed_pipeline/enrich/__main__.py` | Parses CSV → JSON; no API calls |
+| Corpus module | `pipeline/flickseed_pipeline/corpus/__main__.py` | Generates per-film markdown docs |
+| Embed module | `pipeline/flickseed_pipeline/embed/__main__.py` | Multi-view vectorization |
+| View-weight config | `pipeline/config.yaml` | Hand-edited; committed (embed reads weights from here) |
+| Raw enrichment | `data/raw/{films.csv,keywords.json,credits.json}` | Committed |
+| Corpus docs | `data/corpus/*.md` | Committed |
 | Final vectors | `data/derived/embeddings.parquet` | Committed (small, useful in history) |
-| Diagnostic report | `pipeline/reports/embedding-diagnostic.md` | Gitignored |
+| Diagnostic script | `pipeline/scripts/diagnose_embeddings.py` | Working — top-5 neighbors with view/film options |
+| Plot script | `pipeline/scripts/plot_embeddings.py` | Interactive 2D scatter (UMAP/t-SNE + Plotly) |
 
 ## Pipeline stages (PROJECT.md §5 made concrete)
 
-1. **Ingestion.** Run the committed `/discover` query (lives in
-   `pipeline/flickseed_pipeline/ingest/`). Get film IDs + base metadata.
-2. **Enrichment.** Per film, call `/movie/{id}`, `/movie/{id}/keywords`,
-   `/movie/{id}/credits`, `/movie/{id}/recommendations`. Cache to
-   `data/raw/*.json`. Skip endpoints whose cache exists unless `--refresh`.
-3. **Feature extraction:**
-   - `overview` (string) → sentence-transformer (e.g. `all-MiniLM-L6-v2`) → 384-dim
-   - `keywords` → multi-hot over the full vocabulary → PCA → 64-dim
-   - `credits` (director + writer + DP + composer + editor) → sparse co-occurrence → PCA → 64-dim
-4. **Graph construction.** Build a directed graph where nodes are films and
-   edges come from `/recommendations` (and optionally `/similar`). For films
-   outside the seed set referenced as recommendations, decide: include as
-   "anchor neighbors" (extends graph) or drop. Default: include 1-hop neighbors
-   only, drop nodes not reachable from any seed.
-5. **Graph embedding.** Run node2vec over the graph → 128-dim per film.
-   Library options: `gensim` + `node2vec` package, or `pecanpy`, or `karateclub`.
-6. **Personal notes (optional).** If `data/notes/{tmdb_id}.md` exists for a
-   film, embed it with the same sentence-transformer → 384-dim. Otherwise, a
-   zero vector (mask handled by view weight = 0 when missing).
-7. **Vector composition.** Concatenate all views per film, apply per-view
-   weights from `pipeline/config.yaml`, L2-normalize the result.
-8. **Output.** Write `data/derived/embeddings.parquet` — one row per film,
-   columns: `tmdb_id`, `title`, `vector` (list of floats), plus per-view
-   sub-vectors for debugging (`vector_overview`, `vector_keyword`, etc.).
-9. **Diagnostic.** Sample 10 random films, compute top-5 nearest neighbors by
-   cosine similarity, write a markdown report. Per PROJECT.md §5: if
-   results look "same genre, same era," **raise non-text view weights** and
-   re-run before retreating to richer text.
+1. **Enrichment.** Parse `data/raw/films.csv` (from `get_films.py --mode finalize`)
+   into structured JSON. No API calls — keywords and credits are baked into the CSV.
+   ```bash
+   uv run python -m flickseed_pipeline.enrich
+   ```
+   Outputs: `data/raw/keywords.json`, `data/raw/credits.json`
+
+2. **Corpus.** Generate per-film markdown documents from the CSV + credits.
+   Includes optional personal notes from `data/notes/{tmdb_id}.md`.
+   ```bash
+   uv run python -m flickseed_pipeline.corpus
+   ```
+   Outputs: `data/corpus/*.md` (one file per film)
+
+3. **Embedding.** Multi-view vectorization:
+   - `overview` — corpus text → sentence-transformer (`all-MiniLM-L6-v2`) → 384-dim
+   - `keywords` → multi-hot over vocabulary → PCA → 64-dim
+   - `crew` (director + writer + DP + composer + editor) → sparse co-occurrence → PCA → 64-dim
+   - `notes` (optional) — personal notes → sentence-transformer → 384-dim (zeros if absent)
+   - **Upcoming:** `graph` — node2vec over TMDB `/recommendations` → ~128-dim
+
+   Per-view weights from `pipeline/config.yaml` are applied before concatenation.
+   Final vector is L2-normalized. Currently 896-dim (384+64+64+384).
+   ```bash
+   uv run python -m flickseed_pipeline.embed
+   ```
+   Outputs: `data/derived/embeddings.parquet` (one row per film with fused + per-view sub-vectors)
+
+4. **Diagnostic.** Top-5 nearest neighbors by cosine similarity. Per PROJECT.md §5:
+   if results look "same genre, same era," raise non-text view weights and re-run.
+   ```bash
+   uv run python scripts/diagnose_embeddings.py
+   uv run python scripts/diagnose_embeddings.py --film 278    # query specific film
+   uv run python scripts/diagnose_embeddings.py --view crew_pca  # isolate a view
+   ```
+
+5. **Visualization.** Interactive 2D scatter of the embedding space.
+   ```bash
+   uv run python scripts/plot_embeddings.py
+   uv run python scripts/plot_embeddings.py --view overview_embed --method tsne
+   ```
 
 ## View-weight config
 
@@ -70,13 +87,12 @@ Will invokes this with `/embed-films` when:
 ```yaml
 # Multi-view embedding weights (PROJECT.md §5).
 # Per-view weight applies before concatenation and L2-norm.
-# Raise `graph` and lower `overview` if the diagnostic shows genre-clustering.
+# Raise non-text weights if the diagnostic shows genre-clustering.
 view_weights:
   overview: 1.0
-  keywords: 0.5
-  crew: 0.5
-  graph: 1.5
-  notes: 1.0
+  keyword: 1.0
+  crew: 1.0
+  notes: 0.5
 
 # Embedding model + dims. Change these and you'll need a full re-embed.
 models:
@@ -84,18 +100,18 @@ models:
   text_dim: 384
   keyword_pca_dim: 64
   crew_pca_dim: 64
-  node2vec:
-    dim: 128
-    walk_length: 30
-    num_walks: 200
-    p: 1.0
-    q: 1.0
 
-# Graph construction.
-graph:
-  edges_from: ["recommendations"]  # could add "similar"
-  include_one_hop_neighbors: true
+# Upcoming: node2vec graph embedding
+# node2vec:
+#   dim: 128
+#   walk_length: 30
+#   num_walks: 200
+#   p: 1.0
+#   q: 1.0
 ```
+
+These are initial values — the weights are tunable and the diagnostic gate
+tells you when to adjust them.
 
 ## Behavior when invoked
 
@@ -134,71 +150,40 @@ graph:
 ### Embedding workflow
 
 4. **Verify pipeline prerequisites.**
-   - The canonical query is committed under `pipeline/flickseed_pipeline/ingest/`
+   - `data/raw/films.csv` exists (from `get_films.py --mode finalize`)
    - `pipeline/config.yaml` exists (create with the defaults shown above if not)
    - Required deps in `pipeline/pyproject.toml`:
-     `httpx`, `sentence-transformers`, `networkx`, `node2vec` (or `pecanpy`),
-     `scikit-learn`, `pandas`, `pyarrow`. If missing, add them and run `uv sync`.
+     `sentence-transformers`, `scikit-learn`, `pandas`, `pyarrow`, `numpy`.
+     If missing, add them and run `uv sync`.
 5. **Show current view weights.** Read `pipeline/config.yaml`, display.
-6. **Ask whether to refresh enrichment.** TMDB calls are slow and rate-limited
-   (~40/sec). Default: use cached `data/raw/*.json` if present, only fetch
-   missing endpoints. Offer `--refresh` to force re-fetch.
-7. **Create / edit `pipeline/scripts/enrich_and_embed.py`** to run stages 1–9.
-8. **Run it:** `cd pipeline && uv run python scripts/enrich_and_embed.py`.
-9. **Show the diagnostic.** Open `pipeline/reports/embedding-diagnostic.md`,
-   summarize the 10 sample results, ask if they look "tonally adjacent across
-   genre/era" (good) or "same genre, same era" (raise graph weight, re-run).
+6. **Run the pipeline stages in order:**
+   ```bash
+   cd pipeline
+   uv run python -m flickseed_pipeline.enrich
+   uv run python -m flickseed_pipeline.corpus
+   uv run python -m flickseed_pipeline.embed
+   ```
+7. **Run the diagnostic:**
+   ```bash
+   uv run python scripts/diagnose_embeddings.py
+   ```
+   Summarize the 10 sample results. Ask if they look "tonally adjacent across
+   genre/era" (good) or "same genre, same era" (tune weights, re-run).
+8. **Optionally visualize:** `uv run python scripts/plot_embeddings.py`
 
-## Script shape (for `enrich_and_embed.py`)
+## Module architecture
 
-Outline only — skill generates / edits the real file each run.
+The pipeline is split into three modules (not a single script):
 
-```python
-# pipeline/scripts/enrich_and_embed.py
-"""Run the Flickseed representation-learning pipeline.
-
-Driven by the embed-films skill. Reads pipeline/config.yaml for view weights.
-"""
-from pathlib import Path
-import json, yaml, httpx, pandas as pd, numpy as np
-from sentence_transformers import SentenceTransformer
-from sklearn.decomposition import PCA
-import networkx as nx
-from node2vec import Node2Vec
-
-ROOT = Path(__file__).parent.parent.parent
-CFG = yaml.safe_load((ROOT / "pipeline/config.yaml").read_text())
-
-def ingest() -> list[dict]: ...        # run committed /discover query
-def enrich(films) -> dict: ...         # /keywords, /credits, /recommendations
-def text_vectors(films, model) -> np.ndarray: ...
-def keyword_vectors(films) -> np.ndarray: ...     # multi-hot → PCA
-def crew_vectors(films) -> np.ndarray: ...         # sparse → PCA
-def build_graph(films, recs) -> nx.DiGraph: ...
-def graph_vectors(graph, films) -> np.ndarray: ...  # node2vec
-def notes_vectors(films, model) -> np.ndarray: ...  # optional, zeros if missing
-def compose(views: dict, weights: dict) -> np.ndarray: ...  # weight, concat, L2-norm
-def diagnose(vectors, films) -> str: ...           # top-5 for 10 random → markdown
-
-def main():
-    films = ingest()
-    enriched = enrich(films)
-    model = SentenceTransformer(CFG["models"]["text_embed"])
-    views = {
-        "overview": text_vectors(films, model),
-        "keywords": keyword_vectors(films),
-        "crew":     crew_vectors(films),
-        "graph":    graph_vectors(build_graph(films, enriched), films),
-        "notes":    notes_vectors(films, model),
-    }
-    final = compose(views, CFG["view_weights"])
-    pd.DataFrame({"tmdb_id": [...], "title": [...], "vector": list(final)}) \
-      .to_parquet(ROOT / "data/derived/embeddings.parquet")
-    (ROOT / "pipeline/reports/embedding-diagnostic.md").write_text(diagnose(final, films))
-
-if __name__ == "__main__":
-    main()
 ```
+pipeline/flickseed_pipeline/enrich/__main__.py   # CSV → keywords.json + credits.json
+pipeline/flickseed_pipeline/corpus/__main__.py   # CSV + credits → data/corpus/*.md
+pipeline/flickseed_pipeline/embed/__main__.py    # corpus + JSON → embeddings.parquet
+```
+
+Each is invocable via `uv run python -m flickseed_pipeline.<stage>`.
+The embed module reads view weights from `pipeline/config.yaml` and outputs
+per-view sub-vectors alongside the fused vector for debugging and re-weighting.
 
 ## Diagnostic report format
 
@@ -219,22 +204,25 @@ Top-5 most similar:
 
 ## Notes for Will (edit freely as the pipeline matures)
 
-- **node2vec hyperparams matter.** `p` and `q` shift the random walk between
-  BFS-like (community-finding) and DFS-like (structural-role-finding). Start
-  with defaults; tweak if graph embedding feels off.
 - **PCA dims are tunable** but `64` for keywords and crew is a reasonable
   starting point — these signals are sparse, PCA-reducing too aggressively
   destroys information.
-- **Caching is your friend.** `data/raw/` is gitignored and the script should
-  short-circuit on existing cache files. Re-embed cycles should be fast (only
-  re-running stages 3–9) unless you `--refresh`.
+- **Re-embedding is fast.** The expensive part is the TMDB API calls (done once
+  at finalize time). Re-running enrich → corpus → embed only does local
+  computation — no network calls.
 - **Notes are optional.** Files under `data/notes/{tmdb_id}.md` get embedded
-  when present; missing → zero vector with weight=0 applied so it doesn't bias.
+  when present; missing → zero vector so it doesn't bias.
 - **Downstream consumers.** The next pipeline stage (`cluster/`) reads
   `data/derived/embeddings.parquet`. BERTopic / k-NN / HDBSCAN expect the
-  final composed vector, not per-view sub-vectors — but sub-vectors are kept
+  fused vector, not per-view sub-vectors — but sub-vectors are kept
   in the parquet for debugging and re-weighting without re-fetching.
 - **The diagnostic is a gate, not a polish step.** Don't proceed to clustering
   until 10/10 samples feel tonally right. Per PROJECT.md §5: corpus/embedding
   quality is the #1 leverage point — failing to gate here is the single
   biggest failure mode for the whole project.
+- **Node2vec is upcoming.** When implemented, it will add a graph view
+  (~128-dim) from the TMDB `/recommendations` endpoint. This captures
+  "people-who-liked-X-also-liked-Y" signal that no text field provides.
+- **View weights are initial values.** The current defaults (all 1.0 except
+  notes at 0.5) haven't been tuned yet. The diagnostic gate tells you when
+  to adjust — raise non-text weights if genre-clustering appears.

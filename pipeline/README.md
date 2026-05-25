@@ -18,8 +18,8 @@ Each subpackage owns one stage of the pipeline. Stages read their inputs from
 `../data/` and write outputs back to `../data/`.
 
 ```
-ingest    TMDB /discover seed query   -> data/raw/films.json
-enrich    per-film TMDB endpoints     -> data/raw/{keywords,credits,recommendations}.json
+ingest    TMDB /discover seed query   -> data/raw/films.csv
+enrich    parse CSV into JSON         -> data/raw/{keywords,credits}.json
 corpus    overview + optional notes   -> data/corpus/*.md
 embed     multi-view vectors          -> data/derived/embeddings.parquet
 cluster   embeddings -> BERTopic      -> data/derived/stations.json
@@ -32,6 +32,7 @@ See PROJECT.md §5 for the multi-view embedding strategy.
 
 ## Scripts
 
-- `scripts/get_films.py` — TMDB `/discover` probe CLI (driven by `/data-discovery-tmdb`)
+- `scripts/get_films.py` — TMDB `/discover` probe CLI; discover mode for exploration, finalize mode for full export with keywords + credits
 - `scripts/run_pipeline.py` — end-to-end runner (stub)
-- `scripts/diagnose_embeddings.py` — top-5-similar diagnostic (the go/no-go gate; stub)
+- `scripts/diagnose_embeddings.py` — top-5-similar diagnostic (the go/no-go gate); supports `--view`, `--film`, `--seed` options
+- `scripts/plot_embeddings.py` — interactive 2D scatter plot via UMAP/t-SNE + Plotly; supports `--view`, `--method`, `--save`

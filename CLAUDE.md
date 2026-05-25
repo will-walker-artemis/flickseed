@@ -28,6 +28,7 @@ npm run preview     # preview production build
 uv sync                                       # install/update deps
 uv run python scripts/run_pipeline.py          # full pipeline (stub)
 uv run python scripts/diagnose_embeddings.py   # top-5-similar diagnostic
+uv run python scripts/plot_embeddings.py       # interactive 2D scatter (UMAP/t-SNE + Plotly)
 ```
 
 Pipeline requires `TMDB_API_KEY` — copy `pipeline/.env.example` to `pipeline/.env` and fill it in.
@@ -40,9 +41,9 @@ Pipeline requires `TMDB_API_KEY` — copy `pipeline/.env.example` to `pipeline/.
 ingest → enrich → corpus → embed → cluster → graph → layout → export
 ```
 
-- **ingest/enrich**: TMDB API → `data/raw/films.json`, keywords, credits, recommendations
+- **ingest/enrich**: TMDB API → `data/raw/films.csv`, keywords, credits
 - **corpus**: per-film markdown documents in `data/corpus/`
-- **embed**: multi-view vectors (sentence-transformer + PCA + node2vec) → `data/derived/embeddings.parquet`
+- **embed**: multi-view vectors (sentence-transformer + PCA; node2vec upcoming) → `data/derived/embeddings.parquet`
 - **cluster**: BERTopic → `data/derived/stations.json` (25-40 stations)
 - **graph**: mutual k-NN → `data/derived/station_graph.json` + `candidate_paths.json`
 - **layout**: Vignelli solver (0°/45°/90° angles)

@@ -25,26 +25,35 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 from sentence_transformers import SentenceTransformer
 from sklearn.decomposition import PCA
 
 ROOT = Path(__file__).resolve().parents[3]
+CONFIG_PATH = ROOT / "pipeline" / "config.yaml"
 CORPUS_DIR = ROOT / "data" / "corpus"
 KEYWORDS_PATH = ROOT / "data" / "raw" / "keywords.json"
 CREDITS_PATH = ROOT / "data" / "raw" / "credits.json"
 NOTES_DIR = ROOT / "data" / "notes"
 OUTPUT_PATH = ROOT / "data" / "derived" / "embeddings.parquet"
 
-DEFAULT_MODEL = "all-MiniLM-L6-v2"
-KEYWORD_PCA_DIM = 64
-CREW_PCA_DIM = 64
 
-VIEW_WEIGHTS = {
+def load_config() -> dict:
+    if CONFIG_PATH.exists():
+        return yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    return {}
+
+
+CFG = load_config()
+DEFAULT_MODEL = CFG.get("models", {}).get("text_embed", "sentence-transformers/all-MiniLM-L6-v2").replace("sentence-transformers/", "")
+KEYWORD_PCA_DIM = CFG.get("models", {}).get("keyword_pca_dim", 64)
+CREW_PCA_DIM = CFG.get("models", {}).get("crew_pca_dim", 64)
+VIEW_WEIGHTS = CFG.get("view_weights", {
     "overview": 1.0,
     "keyword": 1.0,
     "crew": 1.0,
     "notes": 0.5,
-}
+})
 
 
 def load_corpus(corpus_dir: Path) -> list[tuple[str, str, str]]:

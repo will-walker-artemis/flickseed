@@ -53,16 +53,16 @@ sharing. TouchDesigner as parallel cinematic-render output (later).
 ```
 TMDB discover seed query (+ your notes, optional)
         │
-        ▼  pipeline/flickseed_pipeline/ingest/
-data/raw/films.json
+        ▼  pipeline/scripts/get_films.py --mode finalize
+data/raw/films.csv  (keywords + credits baked in)
         │
-        ▼  pipeline/flickseed_pipeline/enrich/   (TMDB /keywords, /credits, /recommendations per film)
-data/raw/{keywords,credits,recommendations}.json
+        ▼  pipeline/flickseed_pipeline/enrich/   (parses CSV → structured JSON, no API calls)
+data/raw/{keywords,credits}.json
         │
         ▼  pipeline/flickseed_pipeline/corpus/
 data/corpus/*.md  (TMDB overview + optional notes per film)
         │
-        ▼  pipeline/flickseed_pipeline/embed/    (multi-view: text + keyword + crew + graph node2vec)
+        ▼  pipeline/flickseed_pipeline/embed/    (multi-view: text + keyword + crew + notes; node2vec upcoming)
 data/derived/embeddings.parquet  (concatenated, L2-normalized per §5)
         │
         ├─► diagnostic: top-5-similar test  ◄── go/no-go gate
@@ -125,19 +125,23 @@ flickseed/
 │   │   ├── layout/
 │   │   └── export.py
 │   └── scripts/
-│       ├── get_films.py           ← TMDB /discover probe CLI
+│       ├── get_films.py           ← TMDB /discover probe CLI (discover + finalize modes)
 │       ├── run_pipeline.py        ← (stub)
-│       └── diagnose_embeddings.py ← (stub)
+│       ├── diagnose_embeddings.py ← top-5-similar diagnostic (working)
+│       └── plot_embeddings.py     ← interactive 2D scatter (UMAP/t-SNE + Plotly)
 │
 ├── data/
-│   ├── raw/                       ← committed (TMDB /discover output + per-film enrichment)
-│   ├── corpus/                    ← committed (TMDB overview + optional notes)
+│   ├── raw/                       ← committed (films.csv + keywords.json + credits.json)
+│   ├── corpus/                    ← committed (per-film markdown: TMDB overview + optional notes)
+│   ├── notes/                     ← committed (optional hand-written personal notes per film)
 │   ├── derived/                   ← committed (embeddings, stations, graph)
 │   └── layout.json                ← committed, the contract
 │
 ├── docs/
 │   ├── architecture.md
-│   └── data-discovery.md
+│   ├── data-discovery.md
+│   ├── embedding-pipeline.md
+│   └── terms.md                   ← domain glossary / design guide
 │
 ├── .claude/skills/
 │   ├── data-discovery-tmdb.md
@@ -163,22 +167,27 @@ Embeddings are only as good as the signal we give them. TMDB overviews alone
 tend toward genre-recognizer output. The mitigation is **multi-view
 vectorization** across multiple TMDB signals, not richer text.
 
-**Signals, in priority order:**
-1. **TMDB metadata** — overview, keywords, credits, genres, country, language, year
-2. **TMDB recommendation graph** — node2vec over `/recommendations` captures
+**Signals (implemented):**
+1. **Overview** — sentence-transformer on TMDB overview text → 384-dim
+2. **Keywords** — TMDB community tags, multi-hot → PCA → 64-dim
+3. **Crew** — director/writer/DP/composer/editor co-occurrence → PCA → 64-dim
+4. **Notes** *(optional)* — 1–2 sentences per film in your voice → 384-dim (zeros if missing)
+
+**Upcoming:**
+5. **TMDB recommendation graph** — node2vec over `/recommendations` captures
    "people-who-liked-X-also-liked-Y" texture not present in any text field
-3. **Your own notes** *(optional)* — 1–2 sentences per film in your voice;
-   injected into corpus text before embedding so they shift the map's geometry
-4. **Deferred** — Wikipedia plot + reception, Letterboxd reviews
+
+**Deferred:** Wikipedia plot + reception, Letterboxd reviews
 
 **Per-film vector** (concatenated, L2-normalized):
 ```
 [ overview_embed | keyword_multihot_PCA | crew_sparse_PCA
-  | recommendation_node2vec | your_notes_embed (optional) ]
+  | your_notes_embed (optional) ]
 ```
+Currently 896-dim (384+64+64+384). Node2vec will add ~128-dim when implemented.
 
-Tunable weights per view. Raise `recommendation_node2vec` if the diagnostic
-shows genre-clustering.
+Tunable weights per view in `pipeline/config.yaml`. Raise non-text weights if the
+diagnostic shows genre-clustering.
 
 **Diagnostic test** (run after every embedding revision):
 - For 10 random films, print top-5 most similar
@@ -318,9 +327,9 @@ Reads same `data/layout.json`. Provides cinematic affordances web can't.
 |---|---|---|
 | 0 | done | Strip the existing logging features; move `src/` → `app/src/`; verify build still works |
 | 0b | done | Scaffold `pipeline/` with uv; empty package; verify pipeline builds and imports |
-| 1 | 1 | TMDB ingestion via committed `/discover` seed query (iterate using `/data-discovery-tmdb` skill, then bake the query into `pipeline/flickseed_pipeline/ingest/`) |
-| 2 | 1 | Enrichment pass — `/keywords`, `/credits`, `/recommendations` per seed (via `/embed-films` skill) |
-| 3 | 1 | Multi-view embedding (overview + keyword + crew + node2vec) + top-5 diagnostic |
+| 1 | done | TMDB ingestion via committed `/discover` seed query (`get_films.py --mode finalize` → `data/raw/films.csv`) |
+| 2 | done | Enrichment — CSV parsed into `keywords.json` + `credits.json` (no additional API calls) |
+| 3 | done | Multi-view embedding (overview + keyword + crew + notes) + top-5 diagnostic. Node2vec upcoming |
 | 3b | ongoing | *Optional:* hand-write 1–2 sentence notes per film, re-embed; signal #3 in §5 |
 | 4 | 1 | BERTopic → stations + keywords |
 | 5 | 0.5 | Hand-name stations |
@@ -399,4 +408,4 @@ When bringing this doc into a new conversation, that's enough background.
 
 ---
 
-*Last updated: 2026-05-23*
+*Last updated: 2026-05-25*
