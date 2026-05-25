@@ -39,5 +39,4 @@ jobs:
         with:
           python-version: "3.11"
       - run: uv sync
-      - run: uv run python -c "import flickseed_pipeline; print('imports ok')" 2>/dev/null || uv run python -c "print('no top-level package yet, skipping import check')"
       - run: uv run python -m py_compile scripts/run_pipeline.py
