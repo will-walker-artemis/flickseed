@@ -80,14 +80,15 @@ flowchart TB
 
 | File | Contents | Produced by | Tracked |
 |---|---|---|---|
-| `data/raw/films.csv` | ~150 seed films with keywords + crew | `get_films.py --mode finalize` | gitignored |
-| `data/raw/keywords.json` | Per-film keyword tags from TMDB | `enrich/` — parses CSV | gitignored |
-| `data/raw/credits.json` | Director, writers, DP, composer, editor per film | `enrich/` — parses CSV | gitignored |
+| `data/raw/films.csv` | ~150 seed films with keywords + crew | `get_films.py --mode finalize` | committed |
+| `data/raw/keywords.json` | Per-film keyword tags from TMDB | `enrich/` — parses CSV | committed |
+| `data/raw/credits.json` | Director, writers, DP, composer, editor per film | `enrich/` — parses CSV | committed |
 | `data/corpus/*.md` | TMDB overview + optional notes, one file per film | `corpus/` | committed |
 | `data/notes/{tmdb_id}.md` | Hand-written personal notes (1–2 sentences) | You, manually | committed |
 
 All enrichment data (keywords, credits) is baked into `films.csv` at finalize
-time. The enrich stage is a pure CSV parser with no API calls.
+time. The enrich stage is a pure CSV parser with no API calls. All `data/raw/`
+files are committed to git.
 
 ## What is `data/corpus/`?
 
@@ -126,8 +127,8 @@ a sentence-transformer that maps text to a 384-dimensional vector. Films with
 similar plots, themes, or tonal descriptions end up close in this space.
 
 **Risk:** Overviews tend to emphasize genre and plot beats. If this view
-dominates, you get genre-clusters instead of tonal ones. That's why its default
-weight is `1.0` while the graph view gets `1.5`.
+dominates, you get genre-clusters instead of tonal ones. Tune its weight down
+relative to non-text views if the diagnostic shows genre-clustering.
 
 ### 2. Keywords — thematic tags (64-dim)
 
@@ -170,6 +171,19 @@ composed vector is then L2-normalized, so the remaining views fill the space.
 
 ## Vector composition
 
+### Upcoming: Graph — recommendation signal (~128-dim)
+
+**What it will capture:** The "people-who-liked-X-also-liked-Y" texture from
+TMDB's `/recommendations` endpoint — signal that no text field provides.
+
+**How:** Node2vec random walks over a directed graph of film recommendations,
+producing a per-film vector that encodes graph neighborhood structure.
+
+**Status:** Deferred (tracked as FLI-40). When implemented, this will add
+~128 dimensions to the fused vector.
+
+## Vector composition
+
 The four per-view vectors are combined into a single final vector per film:
 
 1. **Weight:** Each view's vector is multiplied by its weight from `pipeline/config.yaml`
@@ -179,17 +193,18 @@ The four per-view vectors are combined into a single final vector per film:
 The final vector dimensionality is `384 + 64 + 64 + 384 = 896` (before
 normalization, which preserves dimensionality but scales magnitude to 1).
 
-Default weights:
+Current weights (initial values, not yet tuned):
 
 | View | Weight | Rationale |
 |---|---|---|
 | overview | 1.0 | Baseline text signal |
-| keywords | 0.8 | Thematic tags — finer-grained than genre |
-| crew | 0.8 | Creative fingerprint — shared sensibilities |
-| notes | 1.0 | Personal curation, when present |
+| keyword | 1.0 | Thematic tags — finer-grained than genre |
+| crew | 1.0 | Creative fingerprint — shared sensibilities |
+| notes | 0.5 | Personal curation, when present |
 
-Higher weight = more influence on which films end up near each other. Tune these
-in `pipeline/config.yaml` and re-run the pipeline.
+Higher weight = more influence on which films end up near each other. These
+are starting values — tune them in `pipeline/config.yaml` and re-run the embed
+stage. The diagnostic gate tells you when adjustment is needed.
 
 ## Output files
 
@@ -210,9 +225,9 @@ creates this file with defaults if it doesn't exist.
 ```yaml
 view_weights:
   overview: 1.0       # text: TMDB overview → sentence-transformer
-  keywords: 0.8       # TMDB tags → multi-hot → PCA
-  crew: 0.8           # director/writer/DP/composer/editor → co-occurrence → PCA
-  notes: 1.0          # personal notes → sentence-transformer (zeros if missing)
+  keyword: 1.0        # TMDB tags → multi-hot → PCA
+  crew: 1.0           # director/writer/DP/composer/editor → co-occurrence → PCA
+  notes: 0.5          # personal notes → sentence-transformer (zeros if missing)
 
 models:
   text_embed: "sentence-transformers/all-MiniLM-L6-v2"
@@ -220,6 +235,8 @@ models:
   keyword_pca_dim: 64     # PCA target for keyword multi-hot
   crew_pca_dim: 64        # PCA target for crew co-occurrence
 ```
+
+These are initial values — not yet tuned. Adjust based on diagnostic results.
 
 ## The diagnostic gate
 
@@ -267,16 +284,15 @@ Do not proceed to clustering until the diagnostic looks right. This is the gate.
 
 | File | Role | Status |
 |---|---|---|
-| `pipeline/flickseed_pipeline/embed/__init__.py` | Stage module declaration | Stub (docstring only) |
-| `pipeline/flickseed_pipeline/enrich/__init__.py` | Upstream enrichment — parses CSV into keywords.json + credits.json | Complete |
-| `pipeline/scripts/enrich_and_embed.py` | Workhorse script that runs the full embed pipeline | Generated by `/embed-films` skill |
-| `pipeline/scripts/diagnose_embeddings.py` | Standalone diagnostic (top-5 neighbors) | Stub |
-| `.claude/skills/embed-films.md` | Skill definition — orchestrates the entire embed workflow | Complete |
+| `pipeline/flickseed_pipeline/enrich/__main__.py` | Parses CSV into keywords.json + credits.json | Complete |
+| `pipeline/flickseed_pipeline/corpus/__main__.py` | Generates per-film markdown docs | Complete |
+| `pipeline/flickseed_pipeline/embed/__main__.py` | Multi-view vectorization → embeddings.parquet | Complete |
+| `pipeline/scripts/diagnose_embeddings.py` | Top-5 neighbors diagnostic (supports --view, --film) | Complete |
+| `pipeline/scripts/plot_embeddings.py` | Interactive 2D scatter (UMAP/t-SNE + Plotly) | Complete |
+| `.claude/skills/embed-films.md` | Skill definition — orchestrates the embed workflow | Complete |
 | `pipeline/config.yaml` | View weights + model parameters | Created by skill if missing |
 
-The `/embed-films` skill generates `enrich_and_embed.py` each time it runs. The
-script shape follows the pattern in the skill file — see
-`.claude/skills/embed-films.md` for the full outline.
+Each stage is a module invocable via `uv run python -m flickseed_pipeline.<stage>`.
 
 ## Key dependencies
 
@@ -287,6 +303,9 @@ script shape follows the pattern in the skill file — see
 | `pandas` + `pyarrow` | Parquet I/O for embeddings | `uv sync` |
 | `numpy` | Vector math | `uv sync` |
 | `pyyaml` | Config file parsing | `uv sync` |
+| `plotly` | Interactive scatter plots (plot_embeddings.py) | `uv sync` |
+| `umap-learn` | Dimensionality reduction for visualization | `uv sync` |
+| `networkx` + `node2vec` | Graph embedding (upcoming) | `uv sync` |
 
 All dependencies are declared in `pipeline/pyproject.toml`. Run `uv sync` from
 `pipeline/` to install.

@@ -1,0 +1,16 @@
+# Multi-view embedding weights (PROJECT.md §5).
+# Per-view weight applies before concatenation and L2-norm.
+# Raise non-text weights if the diagnostic shows genre-clustering.
+# These are initial values — not yet tuned.
+view_weights:
+  overview: 1.0
+  keyword: 1.0
+  crew: 1.0
+  notes: 0.5
+
+# Embedding model + dims. Change these and you'll need a full re-embed.
+models:
+  text_embed: "sentence-transformers/all-MiniLM-L6-v2"
+  text_dim: 384
+  keyword_pca_dim: 64
+  crew_pca_dim: 64

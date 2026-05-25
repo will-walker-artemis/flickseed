@@ -45,11 +45,14 @@ def main() -> None:
         reader = csv.DictReader(fh)
         for row in reader:
             tid = row["tmdb_id"]
-            kw_raw = row.get("keywords", "[]")
-            keywords_map[tid] = [{"name": k} for k in json.loads(kw_raw)]
 
-            crew_raw = row.get("crew", "{}")
-            credits_map[tid] = json.loads(crew_raw)
+            kw_parsed = [{"name": k} for k in json.loads(row.get("keywords", "[]"))]
+            if kw_parsed or tid not in keywords_map:
+                keywords_map[tid] = kw_parsed
+
+            crew_parsed = json.loads(row.get("crew", "{}"))
+            if crew_parsed or tid not in credits_map:
+                credits_map[tid] = crew_parsed
 
     KEYWORDS_PATH.parent.mkdir(parents=True, exist_ok=True)
     KEYWORDS_PATH.write_text(json.dumps(keywords_map, indent=2, ensure_ascii=False) + "\n")

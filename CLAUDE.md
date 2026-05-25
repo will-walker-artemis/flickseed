@@ -28,6 +28,7 @@ npm run preview     # preview production build
 uv sync                                       # install/update deps
 uv run python scripts/run_pipeline.py          # full pipeline (stub)
 uv run python scripts/diagnose_embeddings.py   # top-5-similar diagnostic
+uv run python scripts/plot_embeddings.py       # interactive 2D scatter (UMAP/t-SNE + Plotly)
 ```
 
 Pipeline requires `TMDB_API_KEY` — copy `pipeline/.env.example` to `pipeline/.env` and fill it in.
@@ -40,9 +41,9 @@ Pipeline requires `TMDB_API_KEY` — copy `pipeline/.env.example` to `pipeline/.
 ingest → enrich → corpus → embed → cluster → graph → layout → export
 ```
 
-- **ingest/enrich**: TMDB API → `data/raw/films.json`, keywords, credits, recommendations
+- **ingest/enrich**: TMDB API → `data/raw/films.csv`, keywords, credits
 - **corpus**: per-film markdown documents in `data/corpus/`
-- **embed**: multi-view vectors (sentence-transformer + PCA + node2vec) → `data/derived/embeddings.parquet`
+- **embed**: multi-view vectors (sentence-transformer + PCA; node2vec upcoming) → `data/derived/embeddings.parquet`
 - **cluster**: BERTopic → `data/derived/stations.json` (25-40 stations)
 - **graph**: mutual k-NN → `data/derived/station_graph.json` + `candidate_paths.json`
 - **layout**: Vignelli solver (0°/45°/90° angles)
@@ -83,8 +84,13 @@ Both skills check TMDB_API_KEY and ping the API before running.
 
 Before creating a PR, review this file and update it if your changes affect the architecture, commands, pipeline stages, key decisions, or skills documented here.
 
+## Domain Language
+
+Consult **`docs/terms.md`** for canonical definitions of all domain concepts (station, film, line, embedding views, pipeline stages, etc.). Code, naming, component boundaries, and architecture decisions should align with these definitions. If a term says what something *isn't*, treat that as a constraint.
+
 ## Reference Documents
 
 - **PROJECT.md** — source of truth for architecture, build order, and all decisions
+- **docs/terms.md** — domain glossary and design guide; align code and naming to these definitions
 - **pipeline/README.md** — operational guide for pipeline stages
 - **docs/architecture.md** — mermaid diagram

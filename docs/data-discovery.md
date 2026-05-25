@@ -79,6 +79,22 @@ uv run python scripts/get_films.py --params 'with_genres=878&vote_count.gte=100&
 uv run python scripts/get_films.py --params 'with_genres=18&with_original_language=ko&primary_release_date.gte=2010-01-01&primary_release_date.lte=2020-01-01&vote_count.gte=100&sort_by=vote_average.desc'
 ```
 
+## Franchise blocklist
+
+The script automatically excludes known franchise and non-feature entries using
+a hybrid approach:
+
+- **API-level keyword filtering** (`without_keywords`) — removes films tagged
+  with MCU (180547) or TV Special (264598) before results are returned.
+- **Post-fetch ID filtering** — removes specific Star Wars saga films by TMDB
+  ID, since those lack consistent keyword tagging.
+
+The blocklist is defined at the top of `get_films.py` in `BLOCKED_KEYWORD_IDS`
+and `BLOCKED_FILM_IDS`. To add more franchises, find their keyword or film IDs
+via the TMDB API and add them to the appropriate list.
+
+To disable the blocklist entirely, pass `--no-blocklist`.
+
 ## Worked example: tightening a noisy genre pull
 
 Genre alone tends to surface blockbusters at the top of the rating sort because
@@ -89,17 +105,20 @@ the pattern generalises):
 | Step | Added filter | Total |
 |---|---|---|
 | Baseline (genre + open quality) | `with_genres=878&vote_count.gte=200&vote_average.gte=7.0&sort_by=vote_average.desc` | 421 |
-| Exclude one franchise studio | `&without_companies=420` (Marvel Studios = MCU) | ~395 |
+| Blocklist strips MCU + Star Wars | (automatic) | ~400 |
+| Exclude genre noise | `&without_genres=99,10402,10770` (Documentary, Music, TV Movie) | ~380 |
 | Tighten obscurity gate | `vote_count.gte=300` | ~270 |
-| Tighten quality floor | `vote_average.gte=7.5` | **122** |
+| Tighten quality floor | `vote_average.gte=7.5` | **~120** |
 
 Each filter typically halves the result or so. The exact numbers drift as TMDB
 vote counts update; the *shape* of the iteration is what generalises:
 
-1. Strip franchise / studio bias with `without_companies` first — it's the
-   fastest way to clean up "all the top films are from one shared universe."
-2. Raise `vote_count.gte` to drop noise.
-3. Raise `vote_average.gte` to lift canon.
+1. The blocklist handles franchise bias automatically (MCU, Star Wars).
+2. Use `without_genres` to drop non-feature content (docs, music, TV movies).
+3. Raise `vote_count.gte` to drop noise.
+4. Raise `vote_average.gte` to lift canon.
+
+For additional franchise filtering, `without_companies` can exclude by studio:
 
 ### Production company IDs
 
@@ -130,6 +149,7 @@ concept of taste or recommendations — it only knows metadata.
 | `primary_release_date.gte/lte` | Era | YYYY-MM-DD format |
 | `sort_by` | Ranking | `vote_average.desc`, `popularity.desc`, `vote_count.desc` |
 | `with_keywords` | TMDB keyword IDs | Look up via `/search/keyword` |
+| `without_keywords` | Exclude keyword IDs | Comma-separated. Blocklist injects MCU + TV Special automatically |
 | `with_runtime.gte/lte` | Runtime in minutes | Exclude shorts or epics |
 | `with_companies` | Include production company IDs | Comma-separated. Look up via `/search/company` |
 | `without_companies` | Exclude production company IDs | Comma-separated. Strips franchise/studio bias (e.g. MCU = 420) |
@@ -158,6 +178,7 @@ concept of taste or recommendations — it only knows metadata.
 | `--stdout` | Print report to terminal instead of saving (no CSV) |
 | `--lang CODE [CODE ...]` | Ad-hoc per-language pulls (e.g. `--lang ko ja`) |
 | `--era DECADE [DECADE ...]` | Ad-hoc per-decade pulls (e.g. `--era 1960 1970`) |
+| `--no-blocklist` | Disable automatic franchise blocklist (MCU, Star Wars, TV specials) |
 
 ## Tips
 
@@ -169,9 +190,10 @@ concept of taste or recommendations — it only knows metadata.
 - **Combine strategies.** Union multiple pulls — e.g. a quality backbone +
   language-specific pulls + genre-targeted pulls — rather than looking for one
   magic query.
-- **Strip franchise bias early.** `without_companies` is the fastest way to
-  clean up a sort that's dominated by one studio's shared universe (MCU, Star
-  Wars, Pixar). Faster than raising the quality floor, doesn't lose canon.
+- **Franchise filtering is automatic.** The built-in blocklist strips MCU, Star
+  Wars, and TV specials by default. Use `--no-blocklist` to include them.
+  For additional studio-level filtering, `without_companies` can exclude by
+  production company ID.
 - **The top 20 lies.** The markdown report only shows the first 20 rows but
   the CSV has everything. The middle and tail of a query (ranks ~50–120)
   often have the texture you actually want — deep canon, foreign cinema,

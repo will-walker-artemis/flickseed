@@ -33,6 +33,42 @@ REPORT_PATH = REPORTS_DIR / f"film-report-{datetime.now().strftime('%Y%m%d-%H%M%
 BASE = "https://api.themoviedb.org/3"
 
 # ---------------------------------------------------------------------------
+# Blocklist — hybrid keyword + ID filtering
+# ---------------------------------------------------------------------------
+
+# Keyword IDs excluded at the API level (via without_keywords param).
+BLOCKED_KEYWORD_IDS: list[int] = [
+    180547,  # marvel cinematic universe (mcu)
+    264598,  # tv special
+]
+
+# TMDB film IDs excluded post-fetch (for franchises with inconsistent tagging).
+BLOCKED_FILM_IDS: set[int] = {
+    # Star Wars saga
+    11, 1891, 1892, 1893, 1894, 1895,   # OT + prequels
+    140607, 181808, 181812,              # sequels
+}
+
+
+def apply_blocklist_params(params: dict) -> dict:
+    """Inject without_keywords into query params."""
+    if not BLOCKED_KEYWORD_IDS:
+        return params
+    existing = params.get("without_keywords", "")
+    ids = set(BLOCKED_KEYWORD_IDS)
+    if existing:
+        ids.update(int(x) for x in str(existing).split(",") if x.strip())
+    return {**params, "without_keywords": ",".join(str(i) for i in sorted(ids))}
+
+
+def apply_blocklist_films(films: list[dict]) -> list[dict]:
+    """Remove films matching BLOCKED_FILM_IDS."""
+    if not BLOCKED_FILM_IDS:
+        return films
+    return [f for f in films if f["id"] not in BLOCKED_FILM_IDS]
+
+
+# ---------------------------------------------------------------------------
 # Preset query catalog
 # ---------------------------------------------------------------------------
 
@@ -350,28 +386,34 @@ def parse_args() -> argparse.Namespace:
         "--stdout", action="store_true",
         help="Print report to stdout instead of writing to file.",
     )
+    p.add_argument(
+        "--no-blocklist", action="store_true",
+        help="Disable franchise blocklist (MCU, Star Wars, Doctor Who).",
+    )
     return p.parse_args()
 
 
 def resolve_queries(args: argparse.Namespace) -> list[tuple[str, dict, str]]:
     """Return list of (name, params, description) to run."""
     result: list[tuple[str, dict, str]] = []
+    use_blocklist = not args.no_blocklist
+    inject = apply_blocklist_params if use_blocklist else lambda p: p
 
     if args.params:
-        custom_params = dict(parse_qsl(args.params))
+        custom_params = inject(dict(parse_qsl(args.params)))
         result.append(("custom", custom_params, "Ad-hoc CLI query"))
         return result
 
     if args.lang:
         preset = dict(PRESETS["per-language"])
         for sub_name, params in expand_queries(preset, cli_langs=args.lang):
-            result.append((f"per-language/{sub_name}", params, preset["description"]))
+            result.append((f"per-language/{sub_name}", inject(params), preset["description"]))
         return result
 
     if args.era:
         preset = dict(PRESETS["era-sweep"])
         for sub_name, params in expand_queries(preset, cli_decades=args.era):
-            result.append((f"era-sweep/{sub_name}", params, preset["description"]))
+            result.append((f"era-sweep/{sub_name}", inject(params), preset["description"]))
         return result
 
     names = args.queries or list(PRESETS.keys())
@@ -383,7 +425,7 @@ def resolve_queries(args: argparse.Namespace) -> list[tuple[str, dict, str]]:
         preset = PRESETS[name]
         for sub_name, params in expand_queries(preset):
             full_name = f"{name}/{sub_name}" if sub_name else name
-            result.append((full_name, params, preset["description"]))
+            result.append((full_name, inject(params), preset["description"]))
 
     return result
 
@@ -418,8 +460,11 @@ def main() -> None:
     sections: list[dict] = []
     with httpx.Client(timeout=30) as client:
         genres = fetch_genres(client, api_key)
+        use_blocklist = not args.no_blocklist
         for name, params, description in queries:
             all_films, total = discover_all(client, api_key, params, max_pages=max_pages)
+            if use_blocklist:
+                all_films = apply_blocklist_films(all_films)
             print(f"  {name}: {len(all_films)} films", file=sys.stderr)
             sections.append({
                 "name": name,
