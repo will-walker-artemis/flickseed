@@ -107,7 +107,7 @@ in space and have returned to Earth to find their creator.
 
 The text is intentionally lean — just the TMDB overview plus optional personal
 notes. Rather than enriching the text with Wikipedia plots or critic blurbs, the
-embedding stage compensates via the non-text views (keywords, crew, graph). This
+embedding stage compensates via the non-text views (keywords, crew). This
 keeps the corpus simple and the embedding quality tunable via view weights.
 
 ## The four views

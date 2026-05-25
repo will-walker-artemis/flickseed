@@ -176,7 +176,7 @@ def fetch_credits(client: httpx.Client, api_key: str, film_id: int) -> dict:
     crew = data.get("crew", [])
     return {
         "director": [m["name"] for m in crew if m.get("job") == "Director"],
-        "writers": [m["name"] for m in crew if m.get("department") == "Writing"],
+        "writers": [m["name"] for m in crew if m.get("job") in ("Screenplay", "Writer")],
         "cinematographer": [m["name"] for m in crew if m.get("job") == "Director of Photography"],
         "composer": [m["name"] for m in crew if m.get("job") == "Original Music Composer"],
         "editor": [m["name"] for m in crew if m.get("job") == "Editor"],
