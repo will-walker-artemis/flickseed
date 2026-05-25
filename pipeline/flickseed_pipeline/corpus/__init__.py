@@ -1,16 +1,16 @@
-"""Corpus: render per-film ~200-300 token text documents into data/corpus/*.md.
+"""Corpus: write per-film markdown documents to data/corpus/*.md.
 
-Template (PROJECT.md §5):
-    [Title] ([Year], dir. [Director], [Country])
+Per PROJECT.md §5 (post-pivot), per-film text is intentionally lean: the TMDB
+overview plus the user's optional notes (if data/notes/<tmdb_id>.md exists).
+Atmospheric descriptors, Wikipedia plot, and critic blurbs are deferred — the
+embedding stage compensates via multi-view vectorization (keywords + credits
++ recommendation node2vec), not richer text.
 
-    [Wikipedia plot, condensed to ~80 tokens]
+Template:
+    # [Title] ([Year])
+    Director: [Director]   Country: [Country]
 
-    Your one-liner: [1-2 sentences in your voice about texture/feel]
+    [TMDB overview]
 
-    Atmosphere: [5-10 affective descriptors]
-
-    [1 vivid sentence from a critic/Letterboxd review]
-
-Corpus quality is the #1 leverage point — embeddings are only as good as text.
-This stage generates *drafts*; hand-editing the corpus is an explicit ongoing step.
+    [Optional: contents of data/notes/<tmdb_id>.md]
 """
