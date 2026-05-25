@@ -1,21 +1,21 @@
-"""Probe TMDB /discover/movie. Writes a markdown report + full CSV.
+"""Probe TMDB /discover/movie in two modes.
 
-The report shows the first 20 films per query for quick scanning.
-The CSV contains ALL matching films across all pages.
+discover (default) — quick exploration: first page (~25 films), .md report only.
+finalize           — full pipeline export: all pages, keywords + credits, .md + CSV.
 
-    uv run python scripts/get_films.py                     # run all preset queries
-    uv run python scripts/get_films.py canon-quality       # run one preset
-    uv run python scripts/get_films.py long-tail era-sweep # run several
-    uv run python scripts/get_films.py --lang ko ja        # ad-hoc per-language probe
-    uv run python scripts/get_films.py --era 1960 1970     # ad-hoc era sweep for specific decades
+    uv run python scripts/get_films.py canon-quality                        # discover mode
+    uv run python scripts/get_films.py --mode finalize --size 150 --yes     # finalize mode
+    uv run python scripts/get_films.py --mode finalize -A --yes             # all results
+    uv run python scripts/get_films.py --lang ko ja                         # ad-hoc languages
+    uv run python scripts/get_films.py --era 1960 1970                      # ad-hoc decades
     uv run python scripts/get_films.py --params 'vote_count.gte=200&sort_by=popularity.desc'
-    uv run python scripts/get_films.py --no-csv            # skip CSV, report only
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import json
 import os
 import sys
 import time
@@ -33,7 +33,7 @@ REPORT_PATH = REPORTS_DIR / f"film-report-{datetime.now().strftime('%Y%m%d-%H%M%
 BASE = "https://api.themoviedb.org/3"
 
 # ---------------------------------------------------------------------------
-# Preset query catalog (mirrors .claude/skills/probe-tmdb.md)
+# Preset query catalog
 # ---------------------------------------------------------------------------
 
 PRESETS: dict[str, dict] = {
@@ -110,21 +110,38 @@ def fetch_genres(client: httpx.Client, api_key: str) -> dict[int, str]:
     return GENRE_CACHE
 
 
+def _get_with_retry(client: httpx.Client, url: str, **kwargs) -> httpx.Response:
+    for attempt in range(4):
+        resp = client.get(url, **kwargs)
+        if resp.status_code != 429:
+            return resp
+        wait = float(resp.headers.get("Retry-After", 2**attempt))
+        print(f"  rate-limited, retrying in {wait:.0f}s…", file=sys.stderr)
+        time.sleep(wait)
+    return resp
+
+
 def discover_page(client: httpx.Client, api_key: str, params: dict, page: int = 1) -> dict:
-    r = client.get(
+    r = _get_with_retry(
+        client,
         f"{BASE}/discover/movie",
         params={**params, "api_key": api_key, "page": page},
+        timeout=30.0,
     )
     r.raise_for_status()
     return r.json()
 
 
-def discover_all(client: httpx.Client, api_key: str, params: dict) -> tuple[list[dict], int]:
-    """Fetch all pages for a query. Returns (films, total_results)."""
+def discover_all(
+    client: httpx.Client, api_key: str, params: dict, *, max_pages: int | None = None
+) -> tuple[list[dict], int]:
+    """Fetch pages for a query. Returns (films, total_results)."""
     first = discover_page(client, api_key, params, page=1)
     films = list(first.get("results", []))
     total = first.get("total_results", 0)
     total_pages = min(first.get("total_pages", 1), 500)
+    if max_pages is not None:
+        total_pages = min(total_pages, max_pages)
     for page in range(2, total_pages + 1):
         data = discover_page(client, api_key, params, page=page)
         films.extend(data.get("results", []))
@@ -133,16 +150,37 @@ def discover_all(client: httpx.Client, api_key: str, params: dict) -> tuple[list
 
 def fetch_keywords(client: httpx.Client, api_key: str, film_id: int) -> list[str]:
     try:
-        r = client.get(f"{BASE}/movie/{film_id}/keywords", params={"api_key": api_key})
-        if r.status_code == 429:
-            time.sleep(2)
-            r = client.get(f"{BASE}/movie/{film_id}/keywords", params={"api_key": api_key})
+        r = _get_with_retry(
+            client, f"{BASE}/movie/{film_id}/keywords", params={"api_key": api_key}, timeout=30.0
+        )
         r.raise_for_status()
         return [kw["name"] for kw in r.json().get("keywords", [])]
     except httpx.HTTPStatusError as e:
         if e.response.status_code != 404:
             print(f"    warning: keywords failed for film {film_id} (HTTP {e.response.status_code})", file=sys.stderr)
         return []
+
+
+def fetch_credits(client: httpx.Client, api_key: str, film_id: int) -> dict:
+    try:
+        r = _get_with_retry(
+            client, f"{BASE}/movie/{film_id}/credits", params={"api_key": api_key}, timeout=30.0
+        )
+        r.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code != 404:
+            print(f"    warning: credits failed for film {film_id} (HTTP {e.response.status_code})", file=sys.stderr)
+        return {"director": [], "writers": [], "cinematographer": [], "composer": [], "editor": []}
+
+    data = r.json()
+    crew = data.get("crew", [])
+    return {
+        "director": [m["name"] for m in crew if m.get("job") == "Director"],
+        "writers": [m["name"] for m in crew if m.get("department") == "Writing"],
+        "cinematographer": [m["name"] for m in crew if m.get("job") == "Director of Photography"],
+        "composer": [m["name"] for m in crew if m.get("job") == "Original Music Composer"],
+        "editor": [m["name"] for m in crew if m.get("job") == "Editor"],
+    }
 
 
 def fetch_all_keywords(client: httpx.Client, api_key: str, films: list[dict]) -> None:
@@ -152,6 +190,16 @@ def fetch_all_keywords(client: httpx.Client, api_key: str, films: list[dict]) ->
         if i % 100 == 0 or i == total:
             print(f"    keywords: {i}/{total}", file=sys.stderr)
         time.sleep(0.03)
+
+
+def fetch_all_credits(client: httpx.Client, api_key: str, films: list[dict]) -> None:
+    total = len(films)
+    for i, film in enumerate(films, 1):
+        film["crew"] = fetch_credits(client, api_key, film["id"])
+        if i % 100 == 0 or i == total:
+            print(f"    credits: {i}/{total}", file=sys.stderr)
+        time.sleep(0.03)
+
 
 # ---------------------------------------------------------------------------
 # Query expansion
@@ -222,7 +270,11 @@ def build_report(sections: list[dict], csv_path: str | None = None) -> str:
 def write_csv(sections: list[dict], genres: dict[int, str], csv_path: Path) -> int:
     """Write all films from all sections to a single CSV. Returns total row count."""
     csv_path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = ["query", "tmdb_id", "title", "year", "language", "vote_average", "vote_count", "genres", "country", "keywords", "overview"]
+    fieldnames = [
+        "query", "tmdb_id", "title", "year", "language",
+        "vote_average", "vote_count", "genres", "country",
+        "keywords", "crew", "overview",
+    ]
     total_rows = 0
     with open(csv_path, "w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=fieldnames)
@@ -239,11 +291,13 @@ def write_csv(sections: list[dict], genres: dict[int, str], csv_path: Path) -> i
                     "vote_count": f.get("vote_count", ""),
                     "genres": ", ".join(genres.get(g, str(g)) for g in f.get("genre_ids", [])),
                     "country": f["origin_country"][0] if f.get("origin_country") else "",
-                    "keywords": ", ".join(f.get("keywords", [])),
+                    "keywords": json.dumps(f.get("keywords", [])),
+                    "crew": json.dumps(f.get("crew", {})),
                     "overview": f.get("overview", ""),
                 })
                 total_rows += 1
     return total_rows
+
 
 # ---------------------------------------------------------------------------
 # CLI
@@ -261,24 +315,36 @@ def parse_args() -> argparse.Namespace:
         help="Preset names to run (default: all presets).",
     )
     p.add_argument(
+        "--mode", choices=["discover", "finalize"], default="discover",
+        help="discover: quick preview (~25 films, .md only). finalize: full fetch with keywords+credits, .md + CSV.",
+    )
+    p.add_argument(
+        "--size", type=int, default=None,
+        help="Max unique films to include (finalize mode only).",
+    )
+    p.add_argument(
+        "-A", "--all", action="store_true", dest="fetch_all",
+        help="Fetch all results with no size cap (finalize mode). Prints a warning.",
+    )
+    p.add_argument(
+        "--yes", action="store_true",
+        help="Skip interactive confirmation for -A.",
+    )
+    p.add_argument(
         "--lang", nargs="+", metavar="CODE",
-        help="Ad-hoc per-language probe (ISO 639-1 codes). Overrides per-language preset languages.",
+        help="Ad-hoc per-language probe (ISO 639-1 codes).",
     )
     p.add_argument(
         "--era", nargs="+", type=int, metavar="DECADE",
-        help="Ad-hoc era sweep (decade start years, e.g. 1960 1970). Overrides era-sweep preset decades.",
+        help="Ad-hoc era sweep (decade start years, e.g. 1960 1970).",
     )
     p.add_argument(
         "--params", type=str,
-        help="Raw discover params as a query string, e.g. 'vote_count.gte=200&sort_by=popularity.desc'. Runs as a one-off custom query.",
+        help="Raw discover params as a query string.",
     )
     p.add_argument(
         "-o", "--output", type=Path, default=REPORT_PATH,
-        help=f"Report output path. Default: {REPORT_PATH.relative_to(ROOT)}",
-    )
-    p.add_argument(
-        "--no-csv", action="store_true",
-        help="Skip CSV export, only write the markdown report.",
+        help=f"Output path stem. .md and .csv suffixes are appended. Default: {REPORT_PATH.relative_to(ROOT)}",
     )
     p.add_argument(
         "--stdout", action="store_true",
@@ -327,12 +393,34 @@ def main() -> None:
     api_key = load_api_key()
     queries = resolve_queries(args)
 
+    is_finalize = args.mode == "finalize"
+
+    if is_finalize and not args.size and not args.fetch_all:
+        print("finalize mode requires --size N or -A (--all).", file=sys.stderr)
+        sys.exit(1)
+
+    if is_finalize and args.fetch_all and not args.yes:
+        print(
+            "WARNING: -A fetches ALL results across all queries. "
+            "This may be thousands of films and many API calls.",
+            file=sys.stderr,
+        )
+        try:
+            answer = input("Proceed? [y/N] ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            answer = ""
+        if answer != "y":
+            print("Aborted.", file=sys.stderr)
+            sys.exit(0)
+
+    max_pages = 2 if not is_finalize else None
+
     sections: list[dict] = []
     with httpx.Client(timeout=30) as client:
         genres = fetch_genres(client, api_key)
         for name, params, description in queries:
-            all_films, total = discover_all(client, api_key, params)
-            print(f"  {name}: {len(all_films)} films")
+            all_films, total = discover_all(client, api_key, params, max_pages=max_pages)
+            print(f"  {name}: {len(all_films)} films", file=sys.stderr)
             sections.append({
                 "name": name,
                 "description": description,
@@ -341,45 +429,57 @@ def main() -> None:
                 "all_films": all_films,
             })
 
-        unique_ids: dict[int, dict] = {}
+        # Dedupe across sections
+        unique_films: dict[int, dict] = {}
         for s in sections:
             for f in s["all_films"]:
-                if f["id"] not in unique_ids:
-                    unique_ids[f["id"]] = f
-        print(f"  Fetching keywords for {len(unique_ids)} unique films...")
-        fetch_all_keywords(client, api_key, list(unique_ids.values()))
-        kw_map: dict[int, list[str]] = {fid: f["keywords"] for fid, f in unique_ids.items()}
+                unique_films.setdefault(f["id"], f)
+
+        # Apply size cap in finalize mode
+        if is_finalize and args.size:
+            film_list = list(unique_films.values())[:args.size]
+            unique_films = {f["id"]: f for f in film_list}
+
+        if is_finalize:
+            print(f"  Fetching keywords for {len(unique_films)} unique films…", file=sys.stderr)
+            fetch_all_keywords(client, api_key, list(unique_films.values()))
+            print(f"  Fetching credits for {len(unique_films)} unique films…", file=sys.stderr)
+            fetch_all_credits(client, api_key, list(unique_films.values()))
+
+            # Filter section film lists to only include enriched films
+            enriched_ids = set(unique_films.keys())
+            for s in sections:
+                s["all_films"] = [f for f in s["all_films"] if f["id"] in enriched_ids]
+
+        # Build report tables (keywords shown only if fetched)
         for s in sections:
-            for f in s["all_films"]:
-                if "keywords" not in f:
-                    f["keywords"] = kw_map.get(f["id"], [])
             s["table"] = format_table(s["all_films"][:REPORT_PREVIEW], genres)
 
-    # CSV — full data
+    # CSV — finalize mode only
     csv_label = None
-    if not args.no_csv and not args.stdout:
+    if is_finalize and not args.stdout:
         csv_path = args.output.resolve().with_suffix(".csv")
         row_count = write_csv(sections, genres, csv_path)
         try:
             csv_label = str(csv_path.relative_to(ROOT))
         except ValueError:
             csv_label = str(csv_path)
-        print(f"  CSV: {row_count} rows → {csv_label}")
+        print(f"  CSV: {row_count} rows → {csv_label}", file=sys.stderr)
 
-    # Markdown report — first 20 per query
+    # Markdown report
     report = build_report(sections, csv_path=csv_label)
 
     if args.stdout:
         print(report)
     else:
-        out = args.output.resolve()
+        out = args.output.resolve().with_suffix(".md")
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(report)
         try:
             label = out.relative_to(ROOT)
         except ValueError:
             label = out
-        print(f"  Report: {label}")
+        print(f"  Report: {label}", file=sys.stderr)
 
 
 if __name__ == "__main__":
