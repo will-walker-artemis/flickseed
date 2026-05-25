@@ -18,7 +18,8 @@ import argparse
 import csv
 import os
 import sys
-from datetime import date
+import time
+from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import parse_qsl
 
@@ -27,7 +28,7 @@ from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS_DIR = ROOT / "reports"
-REPORT_PATH = REPORTS_DIR / "film-report.md"
+REPORT_PATH = REPORTS_DIR / f"film-report-{datetime.now().strftime('%Y%m%d-%H%M%S')}.md"
 
 BASE = "https://api.themoviedb.org/3"
 
@@ -129,6 +130,29 @@ def discover_all(client: httpx.Client, api_key: str, params: dict) -> tuple[list
         films.extend(data.get("results", []))
     return films, total
 
+
+def fetch_keywords(client: httpx.Client, api_key: str, film_id: int) -> list[str]:
+    try:
+        r = client.get(f"{BASE}/movie/{film_id}/keywords", params={"api_key": api_key})
+        if r.status_code == 429:
+            time.sleep(2)
+            r = client.get(f"{BASE}/movie/{film_id}/keywords", params={"api_key": api_key})
+        r.raise_for_status()
+        return [kw["name"] for kw in r.json().get("keywords", [])]
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code != 404:
+            print(f"    warning: keywords failed for film {film_id} (HTTP {e.response.status_code})", file=sys.stderr)
+        return []
+
+
+def fetch_all_keywords(client: httpx.Client, api_key: str, films: list[dict]) -> None:
+    total = len(films)
+    for i, film in enumerate(films, 1):
+        film["keywords"] = fetch_keywords(client, api_key, film["id"])
+        if i % 100 == 0 or i == total:
+            print(f"    keywords: {i}/{total}", file=sys.stderr)
+        time.sleep(0.03)
+
 # ---------------------------------------------------------------------------
 # Query expansion
 # ---------------------------------------------------------------------------
@@ -158,8 +182,8 @@ def expand_queries(preset: dict, cli_langs: list[str] | None = None, cli_decades
 
 
 def format_table(films: list[dict], genres: dict[int, str]) -> str:
-    header = "| # | Title | Year | Lang | Vote avg | Vote count | Genres | Country |"
-    sep = "|---|---|---|---|---|---|---|---|"
+    header = "| # | Title | Year | Lang | Vote avg | Vote count | Genres | Country | Keywords |"
+    sep = "|---|---|---|---|---|---|---|---|---|"
     rows = [header, sep]
     for i, f in enumerate(films, 1):
         year = f["release_date"][:4] if f.get("release_date") else "—"
@@ -168,7 +192,8 @@ def format_table(films: list[dict], genres: dict[int, str]) -> str:
         count = f.get("vote_count", "—")
         genre_names = ", ".join(genres.get(g, str(g)) for g in f.get("genre_ids", []))
         country = f["origin_country"][0] if f.get("origin_country") else "—"
-        rows.append(f"| {i} | {f.get('title', '—')} | {year} | {lang} | {avg} | {count} | {genre_names} | {country} |")
+        keywords = ", ".join(f.get("keywords", [])[:5])
+        rows.append(f"| {i} | {f.get('title', '—')} | {year} | {lang} | {avg} | {count} | {genre_names} | {country} | {keywords} |")
     return "\n".join(rows)
 
 
@@ -197,7 +222,7 @@ def build_report(sections: list[dict], csv_path: str | None = None) -> str:
 def write_csv(sections: list[dict], genres: dict[int, str], csv_path: Path) -> int:
     """Write all films from all sections to a single CSV. Returns total row count."""
     csv_path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = ["query", "tmdb_id", "title", "year", "language", "vote_average", "vote_count", "genres", "country", "overview"]
+    fieldnames = ["query", "tmdb_id", "title", "year", "language", "vote_average", "vote_count", "genres", "country", "keywords", "overview"]
     total_rows = 0
     with open(csv_path, "w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=fieldnames)
@@ -214,6 +239,7 @@ def write_csv(sections: list[dict], genres: dict[int, str], csv_path: Path) -> i
                     "vote_count": f.get("vote_count", ""),
                     "genres": ", ".join(genres.get(g, str(g)) for g in f.get("genre_ids", [])),
                     "country": f["origin_country"][0] if f.get("origin_country") else "",
+                    "keywords": ", ".join(f.get("keywords", [])),
                     "overview": f.get("overview", ""),
                 })
                 total_rows += 1
@@ -313,8 +339,21 @@ def main() -> None:
                 "params": params,
                 "total": total,
                 "all_films": all_films,
-                "table": format_table(all_films[:REPORT_PREVIEW], genres),
             })
+
+        unique_ids: dict[int, dict] = {}
+        for s in sections:
+            for f in s["all_films"]:
+                if f["id"] not in unique_ids:
+                    unique_ids[f["id"]] = f
+        print(f"  Fetching keywords for {len(unique_ids)} unique films...")
+        fetch_all_keywords(client, api_key, list(unique_ids.values()))
+        kw_map: dict[int, list[str]] = {fid: f["keywords"] for fid, f in unique_ids.items()}
+        for s in sections:
+            for f in s["all_films"]:
+                if "keywords" not in f:
+                    f["keywords"] = kw_map.get(f["id"], [])
+            s["table"] = format_table(s["all_films"][:REPORT_PREVIEW], genres)
 
     # CSV — full data
     csv_label = None
