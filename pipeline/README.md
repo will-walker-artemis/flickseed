@@ -18,16 +18,20 @@ Each subpackage owns one stage of the pipeline. Stages read their inputs from
 `../data/` and write outputs back to `../data/`.
 
 ```
-ingest    TMDB seeds + Wikipedia + reviews -> data/raw/*.json
-corpus    raw -> per-film ~200-300 token text -> data/corpus/*.md
-embed     corpus -> data/derived/embeddings.parquet
-cluster   embeddings -> data/derived/stations.json (BERTopic)
-graph     stations -> data/derived/station_graph.json + candidate_paths.json
-layout    stations + curated lines -> Vignelli grid positions
-export    everything -> data/layout.json
+ingest    TMDB /discover seed query   -> data/raw/films.json
+enrich    per-film TMDB endpoints     -> data/raw/{keywords,credits,recommendations}.json
+corpus    overview + optional notes   -> data/corpus/*.md
+embed     multi-view vectors          -> data/derived/embeddings.parquet
+cluster   embeddings -> BERTopic      -> data/derived/stations.json
+graph     stations -> mutual k-NN     -> data/derived/{station_graph,candidate_paths}.json
+layout    stations + lines            -> Vignelli grid positions
+export    everything                  -> data/layout.json
 ```
+
+See PROJECT.md §5 for the multi-view embedding strategy.
 
 ## Scripts
 
-- `scripts/run_pipeline.py` — end-to-end runner
-- `scripts/diagnose_embeddings.py` — top-5-similar sanity check (the go/no-go gate)
+- `scripts/get_films.py` — TMDB `/discover` probe CLI (driven by `/data-discovery-tmdb`)
+- `scripts/run_pipeline.py` — end-to-end runner (stub)
+- `scripts/diagnose_embeddings.py` — top-5-similar diagnostic (the go/no-go gate; stub)

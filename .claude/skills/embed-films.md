@@ -10,8 +10,8 @@ ingestion → enrichment → feature extraction → embedding → graph construc
 graph embedding → vector composition → diagnostic.
 
 It is the second half of the data work. The first half — settling on the
-canonical TMDB `/discover` seed query — is the `probe-tmdb` skill. Once that
-query is committed, this skill takes over.
+canonical TMDB `/discover` seed query — is the `data-discovery-tmdb` skill.
+Once that query is committed, this skill takes over.
 
 ## When to invoke
 
