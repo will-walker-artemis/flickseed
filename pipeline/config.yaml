@@ -14,3 +14,24 @@ models:
   text_dim: 384
   keyword_pca_dim: 64
   crew_pca_dim: 64
+
+# Graph stage (station edges + candidate paths).
+# k: how many nearest neighbors each station considers. Mutual filter means
+# the actual edge count will be lower (both sides must agree).
+# Higher k = denser graph = more path options but less selectivity.
+graph:
+  k: 8
+  max_path_length: 8
+  top_n_paths: 50
+
+# Cluster stage (BERTopic → stations).
+# min_topic_size: fewest films a station can have. Lower = more stations.
+# With 150 films targeting 25-40 stations, 3-4 films/station is typical.
+# nr_topics: if set, BERTopic merges down to this many (None = let HDBSCAN decide).
+cluster:
+  min_topic_size: 3
+  umap_n_neighbors: 5
+  umap_n_components: 5
+  umap_min_dist: 0.0
+  hdbscan_min_samples: 1
+  nr_topics: null

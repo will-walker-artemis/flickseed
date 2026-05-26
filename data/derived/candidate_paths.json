@@ -1,0 +1,2058 @@
+{
+  "n_candidates": 34,
+  "k": 8,
+  "paths": [
+    {
+      "rank": 1,
+      "path": [
+        6,
+        25,
+        31,
+        21,
+        13,
+        1,
+        5,
+        4,
+        9
+      ],
+      "path_keywords": [
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "town",
+          "legendary",
+          "hopes"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ]
+      ],
+      "score": 1.2183,
+      "local_coherence": 0.3518,
+      "drift": 1.0926,
+      "monotonicity": 1.0,
+      "length": 9
+    },
+    {
+      "rank": 2,
+      "path": [
+        12,
+        8,
+        31,
+        25,
+        6,
+        19,
+        0,
+        20
+      ],
+      "path_keywords": [
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ]
+      ],
+      "score": 1.1815,
+      "local_coherence": 0.3751,
+      "drift": 1.0499,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 3,
+      "path": [
+        8,
+        31,
+        25,
+        21,
+        11,
+        16,
+        7,
+        2,
+        27
+      ],
+      "path_keywords": [
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "moon",
+          "world",
+          "robot"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ]
+      ],
+      "score": 1.0958,
+      "local_coherence": 0.326,
+      "drift": 1.0606,
+      "monotonicity": 1.0,
+      "length": 9
+    },
+    {
+      "rank": 4,
+      "path": [
+        13,
+        21,
+        31,
+        8,
+        12,
+        3,
+        22,
+        18
+      ],
+      "path_keywords": [
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "animals",
+          "robot",
+          "stranded"
+        ],
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "scientist",
+          "creature",
+          "james"
+        ]
+      ],
+      "score": 0.9337,
+      "local_coherence": 0.314,
+      "drift": 0.9911,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 5,
+      "path": [
+        12,
+        8,
+        31,
+        11,
+        23,
+        1,
+        5,
+        15
+      ],
+      "path_keywords": [
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "town",
+          "legendary",
+          "hopes"
+        ],
+        [
+          "game",
+          "users",
+          "fun"
+        ]
+      ],
+      "score": 0.918,
+      "local_coherence": 0.3411,
+      "drift": 1.0466,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 6,
+      "path": [
+        0,
+        20,
+        19,
+        16,
+        21,
+        11,
+        23,
+        1
+      ],
+      "path_keywords": [
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ]
+      ],
+      "score": 0.8619,
+      "local_coherence": 0.2558,
+      "drift": 1.1232,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 7,
+      "path": [
+        17,
+        9,
+        4,
+        29,
+        12,
+        8,
+        11,
+        25
+      ],
+      "path_keywords": [
+        [
+          "villeneuve",
+          "denis",
+          "denis villeneuve"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "batman",
+          "knight",
+          "alternate"
+        ],
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ]
+      ],
+      "score": 0.8153,
+      "local_coherence": 0.2499,
+      "drift": 1.0876,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 8,
+      "path": [
+        1,
+        23,
+        13,
+        21,
+        28,
+        24,
+        2,
+        27
+      ],
+      "path_keywords": [
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ]
+      ],
+      "score": 0.8074,
+      "local_coherence": 0.2376,
+      "drift": 1.1326,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 9,
+      "path": [
+        22,
+        25,
+        31,
+        24,
+        11,
+        13,
+        23,
+        30
+      ],
+      "path_keywords": [
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "things",
+          "face",
+          "future"
+        ]
+      ],
+      "score": 0.8012,
+      "local_coherence": 0.2616,
+      "drift": 1.0208,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 10,
+      "path": [
+        4,
+        5,
+        1,
+        15,
+        27,
+        2,
+        7,
+        18
+      ],
+      "path_keywords": [
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "town",
+          "legendary",
+          "hopes"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "game",
+          "users",
+          "fun"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "moon",
+          "world",
+          "robot"
+        ],
+        [
+          "scientist",
+          "creature",
+          "james"
+        ]
+      ],
+      "score": 0.7585,
+      "local_coherence": 0.2359,
+      "drift": 1.0717,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 11,
+      "path": [
+        10,
+        16,
+        25,
+        8,
+        1,
+        15,
+        4,
+        14
+      ],
+      "path_keywords": [
+        [
+          "japan",
+          "monster",
+          "island"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "game",
+          "users",
+          "fun"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "masayuki",
+          "humankind",
+          "far"
+        ]
+      ],
+      "score": 0.7573,
+      "local_coherence": 0.2466,
+      "drift": 1.0235,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 12,
+      "path": [
+        18,
+        16,
+        19,
+        6,
+        31,
+        21,
+        28,
+        24
+      ],
+      "path_keywords": [
+        [
+          "scientist",
+          "creature",
+          "james"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ]
+      ],
+      "score": 0.7538,
+      "local_coherence": 0.2937,
+      "drift": 0.998,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 13,
+      "path": [
+        10,
+        16,
+        25,
+        22,
+        3,
+        12,
+        29,
+        27
+      ],
+      "path_keywords": [
+        [
+          "japan",
+          "monster",
+          "island"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "animals",
+          "robot",
+          "stranded"
+        ],
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "batman",
+          "knight",
+          "alternate"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ]
+      ],
+      "score": 0.681,
+      "local_coherence": 0.215,
+      "drift": 1.0559,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 14,
+      "path": [
+        6,
+        19,
+        2,
+        24,
+        11,
+        23,
+        15,
+        4,
+        9
+      ],
+      "path_keywords": [
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "game",
+          "users",
+          "fun"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ]
+      ],
+      "score": 0.6534,
+      "local_coherence": 0.2156,
+      "drift": 1.0926,
+      "monotonicity": 0.875,
+      "length": 9
+    },
+    {
+      "rank": 15,
+      "path": [
+        10,
+        28,
+        24,
+        7,
+        2,
+        19,
+        20,
+        0,
+        17
+      ],
+      "path_keywords": [
+        [
+          "japan",
+          "monster",
+          "island"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ],
+        [
+          "moon",
+          "world",
+          "robot"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "villeneuve",
+          "denis",
+          "denis villeneuve"
+        ]
+      ],
+      "score": 0.6378,
+      "local_coherence": 0.1889,
+      "drift": 1.065,
+      "monotonicity": 1.0,
+      "length": 9
+    },
+    {
+      "rank": 16,
+      "path": [
+        22,
+        25,
+        6,
+        20,
+        17,
+        27,
+        15,
+        1,
+        23
+      ],
+      "path_keywords": [
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "villeneuve",
+          "denis",
+          "denis villeneuve"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "game",
+          "users",
+          "fun"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ]
+      ],
+      "score": 0.6232,
+      "local_coherence": 0.2215,
+      "drift": 1.0142,
+      "monotonicity": 0.875,
+      "length": 9
+    },
+    {
+      "rank": 17,
+      "path": [
+        10,
+        16,
+        21,
+        13,
+        30
+      ],
+      "path_keywords": [
+        [
+          "japan",
+          "monster",
+          "island"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "things",
+          "face",
+          "future"
+        ]
+      ],
+      "score": 0.6228,
+      "local_coherence": 0.2642,
+      "drift": 1.0151,
+      "monotonicity": 1.0,
+      "length": 5
+    },
+    {
+      "rank": 18,
+      "path": [
+        26,
+        20,
+        6,
+        25,
+        11,
+        16,
+        10,
+        28
+      ],
+      "path_keywords": [
+        [
+          "cameron",
+          "james cameron",
+          "james"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "japan",
+          "monster",
+          "island"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ]
+      ],
+      "score": 0.5855,
+      "local_coherence": 0.2247,
+      "drift": 1.0135,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 19,
+      "path": [
+        14,
+        4,
+        5,
+        23,
+        13,
+        11,
+        16,
+        18
+      ],
+      "path_keywords": [
+        [
+          "masayuki",
+          "humankind",
+          "far"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "town",
+          "legendary",
+          "hopes"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "scientist",
+          "creature",
+          "james"
+        ]
+      ],
+      "score": 0.5785,
+      "local_coherence": 0.2124,
+      "drift": 1.0592,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 20,
+      "path": [
+        1,
+        12,
+        8,
+        22,
+        25,
+        28,
+        24,
+        7
+      ],
+      "path_keywords": [
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ],
+        [
+          "moon",
+          "world",
+          "robot"
+        ]
+      ],
+      "score": 0.5722,
+      "local_coherence": 0.2553,
+      "drift": 1.0457,
+      "monotonicity": 0.7143,
+      "length": 8
+    },
+    {
+      "rank": 21,
+      "path": [
+        3,
+        12,
+        8,
+        6,
+        2,
+        27,
+        9,
+        5
+      ],
+      "path_keywords": [
+        [
+          "animals",
+          "robot",
+          "stranded"
+        ],
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ],
+        [
+          "town",
+          "legendary",
+          "hopes"
+        ]
+      ],
+      "score": 0.5594,
+      "local_coherence": 0.2035,
+      "drift": 1.0692,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 22,
+      "path": [
+        13,
+        21,
+        24,
+        11,
+        8,
+        6,
+        20,
+        17
+      ],
+      "path_keywords": [
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "villeneuve",
+          "denis",
+          "denis villeneuve"
+        ]
+      ],
+      "score": 0.5517,
+      "local_coherence": 0.2005,
+      "drift": 1.0699,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 23,
+      "path": [
+        3,
+        22,
+        25,
+        6,
+        19,
+        2,
+        7,
+        18
+      ],
+      "path_keywords": [
+        [
+          "animals",
+          "robot",
+          "stranded"
+        ],
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "moon",
+          "world",
+          "robot"
+        ],
+        [
+          "scientist",
+          "creature",
+          "james"
+        ]
+      ],
+      "score": 0.5299,
+      "local_coherence": 0.2483,
+      "drift": 0.996,
+      "monotonicity": 0.7143,
+      "length": 8
+    },
+    {
+      "rank": 24,
+      "path": [
+        4,
+        5,
+        9,
+        29,
+        27,
+        0,
+        20,
+        19
+      ],
+      "path_keywords": [
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "town",
+          "legendary",
+          "hopes"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ],
+        [
+          "batman",
+          "knight",
+          "alternate"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ]
+      ],
+      "score": 0.5292,
+      "local_coherence": 0.165,
+      "drift": 1.0692,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 25,
+      "path": [
+        17,
+        27,
+        2,
+        19,
+        6,
+        31,
+        13,
+        30
+      ],
+      "path_keywords": [
+        [
+          "villeneuve",
+          "denis",
+          "denis villeneuve"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "things",
+          "face",
+          "future"
+        ]
+      ],
+      "score": 0.5095,
+      "local_coherence": 0.235,
+      "drift": 1.0119,
+      "monotonicity": 0.7143,
+      "length": 8
+    },
+    {
+      "rank": 26,
+      "path": [
+        16,
+        31,
+        13,
+        1,
+        15,
+        27,
+        0,
+        26
+      ],
+      "path_keywords": [
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "game",
+          "users",
+          "fun"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "cameron",
+          "james cameron",
+          "james"
+        ]
+      ],
+      "score": 0.4947,
+      "local_coherence": 0.1946,
+      "drift": 0.9888,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 27,
+      "path": [
+        8,
+        22,
+        18,
+        16,
+        19,
+        20,
+        17,
+        9
+      ],
+      "path_keywords": [
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "scientist",
+          "creature",
+          "james"
+        ],
+        [
+          "killer",
+          "face",
+          "lifelike"
+        ],
+        [
+          "tomorrow",
+          "combat",
+          "alien"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "villeneuve",
+          "denis",
+          "denis villeneuve"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ]
+      ],
+      "score": 0.4835,
+      "local_coherence": 0.1774,
+      "drift": 1.06,
+      "monotonicity": 0.8571,
+      "length": 8
+    },
+    {
+      "rank": 28,
+      "path": [
+        13,
+        23,
+        1,
+        12,
+        29,
+        9,
+        26,
+        20
+      ],
+      "path_keywords": [
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "hero",
+          "job",
+          "dragon"
+        ],
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "batman",
+          "knight",
+          "alternate"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ],
+        [
+          "cameron",
+          "james cameron",
+          "james"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ]
+      ],
+      "score": 0.4578,
+      "local_coherence": 0.1457,
+      "drift": 1.0472,
+      "monotonicity": 1.0,
+      "length": 8
+    },
+    {
+      "rank": 29,
+      "path": [
+        10,
+        28,
+        21,
+        31,
+        11,
+        23,
+        4,
+        29
+      ],
+      "path_keywords": [
+        [
+          "japan",
+          "monster",
+          "island"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "batman",
+          "knight",
+          "alternate"
+        ]
+      ],
+      "score": 0.4019,
+      "local_coherence": 0.2357,
+      "drift": 0.9948,
+      "monotonicity": 0.5714,
+      "length": 8
+    },
+    {
+      "rank": 30,
+      "path": [
+        0,
+        17,
+        9,
+        5,
+        15,
+        23,
+        13,
+        30
+      ],
+      "path_keywords": [
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "villeneuve",
+          "denis",
+          "denis villeneuve"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ],
+        [
+          "town",
+          "legendary",
+          "hopes"
+        ],
+        [
+          "game",
+          "users",
+          "fun"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "girl",
+          "era",
+          "rescue"
+        ],
+        [
+          "things",
+          "face",
+          "future"
+        ]
+      ],
+      "score": 0.3697,
+      "local_coherence": 0.1648,
+      "drift": 1.0468,
+      "monotonicity": 0.7143,
+      "length": 8
+    },
+    {
+      "rank": 31,
+      "path": [
+        26,
+        0,
+        27,
+        29,
+        12,
+        8,
+        21,
+        28
+      ],
+      "path_keywords": [
+        [
+          "cameron",
+          "james cameron",
+          "james"
+        ],
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "batman",
+          "knight",
+          "alternate"
+        ],
+        [
+          "powers",
+          "forces",
+          "future"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "daniel",
+          "wrong",
+          "universes"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ]
+      ],
+      "score": 0.3485,
+      "local_coherence": 0.2006,
+      "drift": 1.0135,
+      "monotonicity": 0.5714,
+      "length": 8
+    },
+    {
+      "rank": 32,
+      "path": [
+        14,
+        4,
+        29,
+        27,
+        2,
+        6,
+        25,
+        28
+      ],
+      "path_keywords": [
+        [
+          "masayuki",
+          "humankind",
+          "far"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "batman",
+          "knight",
+          "alternate"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "robot",
+          "company",
+          "unexpected"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "dog",
+          "human",
+          "soviet"
+        ],
+        [
+          "nuclear",
+          "virus",
+          "sent"
+        ]
+      ],
+      "score": 0.3341,
+      "local_coherence": 0.1894,
+      "drift": 1.0288,
+      "monotonicity": 0.5714,
+      "length": 8
+    },
+    {
+      "rank": 33,
+      "path": [
+        0,
+        27,
+        4,
+        23,
+        11,
+        8,
+        22,
+        3
+      ],
+      "path_keywords": [
+        [
+          "planet",
+          "space",
+          "interstellar"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ],
+        [
+          "hacker",
+          "organization",
+          "britain"
+        ],
+        [
+          "past",
+          "personality",
+          "isnt"
+        ],
+        [
+          "memories",
+          "memory",
+          "unexpected"
+        ],
+        [
+          "henry",
+          "join forces",
+          "need"
+        ],
+        [
+          "dead",
+          "george",
+          "daffy"
+        ],
+        [
+          "animals",
+          "robot",
+          "stranded"
+        ]
+      ],
+      "score": 0.301,
+      "local_coherence": 0.1513,
+      "drift": 0.9287,
+      "monotonicity": 0.7143,
+      "length": 8
+    },
+    {
+      "rank": 34,
+      "path": [
+        7,
+        24,
+        31,
+        6,
+        20,
+        26,
+        9,
+        27
+      ],
+      "path_keywords": [
+        [
+          "moon",
+          "world",
+          "robot"
+        ],
+        [
+          "life",
+          "able",
+          "just"
+        ],
+        [
+          "race",
+          "fantastic",
+          "connected"
+        ],
+        [
+          "park",
+          "steven spielberg",
+          "extraterrestrial"
+        ],
+        [
+          "star",
+          "inside",
+          "crew"
+        ],
+        [
+          "cameron",
+          "james cameron",
+          "james"
+        ],
+        [
+          "sarah",
+          "stop",
+          "love"
+        ],
+        [
+          "alex",
+          "agency",
+          "option"
+        ]
+      ],
+      "score": 0.2644,
+      "local_coherence": 0.1637,
+      "drift": 0.9425,
+      "monotonicity": 0.5714,
+      "length": 8
+    }
+  ]
+}

@@ -1,0 +1,1247 @@
+{
+  "n_stations": 32,
+  "n_films": 150,
+  "min_topic_size": 3,
+  "stations": [
+    {
+      "id": 0,
+      "keywords": [
+        "planet",
+        "space",
+        "interstellar",
+        "live",
+        "use",
+        "advanced",
+        "genetic",
+        "christopher",
+        "hunted",
+        "soon"
+      ],
+      "auto_label": "0_planet_space_interstellar_live",
+      "films": [
+        {
+          "tmdb_id": "62",
+          "title": "2001: A Space Odyssey (1968)"
+        },
+        {
+          "tmdb_id": "16306",
+          "title": "Fantastic Planet (1973)"
+        },
+        {
+          "tmdb_id": "782",
+          "title": "Gattaca (1997)"
+        },
+        {
+          "tmdb_id": "157336",
+          "title": "Interstellar (2014)"
+        },
+        {
+          "tmdb_id": "27072",
+          "title": "On the Silver Globe (1989)"
+        },
+        {
+          "tmdb_id": "871",
+          "title": "Planet of the Apes (1968)"
+        },
+        {
+          "tmdb_id": "687163",
+          "title": "Project Hail Mary (2026)"
+        },
+        {
+          "tmdb_id": "593",
+          "title": "Solaris (1972)"
+        }
+      ],
+      "size": 8,
+      "name": "The Infinite Shore"
+    },
+    {
+      "id": 1,
+      "keywords": [
+        "hero",
+        "job",
+        "dragon",
+        "heroes",
+        "super",
+        "final",
+        "bring",
+        "power",
+        "evil",
+        "order save"
+      ],
+      "auto_label": "1_hero_job_dragon_heroes",
+      "films": [
+        {
+          "tmdb_id": "503314",
+          "title": "Dragon Ball Super: Broly (2018)"
+        },
+        {
+          "tmdb_id": "610150",
+          "title": "Dragon Ball Super: Super Hero (2022)"
+        },
+        {
+          "tmdb_id": "39107",
+          "title": "Dragon Ball Z: Fusion Reborn (1995)"
+        },
+        {
+          "tmdb_id": "245917",
+          "title": "Gintama: The Final Chapter - Be Forever Yorozuya (2013)"
+        },
+        {
+          "tmdb_id": "768744",
+          "title": "My Hero Academia: World Heroes' Mission (2021)"
+        },
+        {
+          "tmdb_id": "728754",
+          "title": "Stand by Me Doraemon 2 (2020)"
+        },
+        {
+          "tmdb_id": "225745",
+          "title": "Steins;Gate: The Movie - Load Region of D\u00e9j\u00e0 Vu (2013)"
+        }
+      ],
+      "size": 7,
+      "name": "Blazing Spirit"
+    },
+    {
+      "id": 2,
+      "keywords": [
+        "robot",
+        "company",
+        "unexpected",
+        "worlds",
+        "giant",
+        "help",
+        "iron",
+        "beautiful",
+        "curiosity",
+        "boy"
+      ],
+      "auto_label": "2_robot_company_unexpected_worlds",
+      "films": [
+        {
+          "tmdb_id": "9693",
+          "title": "Children of Men (2006)"
+        },
+        {
+          "tmdb_id": "264660",
+          "title": "Ex Machina (2015)"
+        },
+        {
+          "tmdb_id": "17431",
+          "title": "Moon (2009)"
+        },
+        {
+          "tmdb_id": "297222",
+          "title": "PK (2014)"
+        },
+        {
+          "tmdb_id": "838240",
+          "title": "Robot Dreams (2023)"
+        },
+        {
+          "tmdb_id": "10386",
+          "title": "The Iron Giant (1999)"
+        }
+      ],
+      "size": 6,
+      "name": "Quiet Machines"
+    },
+    {
+      "id": 3,
+      "keywords": [
+        "animals",
+        "robot",
+        "stranded",
+        "way",
+        "abilities",
+        "fierce",
+        "cares",
+        "built",
+        "storm",
+        "changed"
+      ],
+      "auto_label": "3_animals_robot_stranded_way",
+      "films": [
+        {
+          "tmdb_id": "1327819",
+          "title": "Hoppers (2026)"
+        },
+        {
+          "tmdb_id": "939243",
+          "title": "Sonic the Hedgehog 3 (2024)"
+        },
+        {
+          "tmdb_id": "286217",
+          "title": "The Martian (2015)"
+        },
+        {
+          "tmdb_id": "1184918",
+          "title": "The Wild Robot (2024)"
+        },
+        {
+          "tmdb_id": "698687",
+          "title": "Transformers One (2024)"
+        },
+        {
+          "tmdb_id": "10681",
+          "title": "WALL\u00b7E (2008)"
+        }
+      ],
+      "size": 6,
+      "name": "Survivors' Compass"
+    },
+    {
+      "id": 4,
+      "keywords": [
+        "hacker",
+        "organization",
+        "britain",
+        "known",
+        "ally",
+        "transformed",
+        "driver",
+        "underground",
+        "episodes",
+        "state"
+      ],
+      "auto_label": "4_hacker_organization_britain_known",
+      "films": [
+        {
+          "tmdb_id": "111224",
+          "title": "Ghost in the Shell: S.A.C. 2nd GIG - Individual Eleven (2006)"
+        },
+        {
+          "tmdb_id": "23452",
+          "title": "Gurren Lagann the Movie: The Lights in the Sky Are Stars (2009)"
+        },
+        {
+          "tmdb_id": "526429",
+          "title": "Made in Abyss: Wandering Twilight (2019)"
+        },
+        {
+          "tmdb_id": "655431",
+          "title": "Psycho-Pass 3: First Inspector (2020)"
+        },
+        {
+          "tmdb_id": "18",
+          "title": "The Fifth Element (1997)"
+        },
+        {
+          "tmdb_id": "603",
+          "title": "The Matrix (1999)"
+        },
+        {
+          "tmdb_id": "752",
+          "title": "V for Vendetta (2006)"
+        }
+      ],
+      "size": 7,
+      "name": "Neon Doctrine"
+    },
+    {
+      "id": 5,
+      "keywords": [
+        "town",
+        "legendary",
+        "hopes",
+        "female",
+        "following",
+        "government",
+        "race",
+        "ii",
+        "mahiro",
+        "seemingly"
+      ],
+      "auto_label": "5_town_legendary_hopes_female",
+      "films": [
+        {
+          "tmdb_id": "149",
+          "title": "Akira (1988)"
+        },
+        {
+          "tmdb_id": "11299",
+          "title": "Cowboy Bebop: The Movie (2001)"
+        },
+        {
+          "tmdb_id": "4977",
+          "title": "Paprika (2006)"
+        },
+        {
+          "tmdb_id": "71883",
+          "title": "Redline (2009)"
+        },
+        {
+          "tmdb_id": "24362",
+          "title": "The Second Renaissance Part II (2003)"
+        },
+        {
+          "tmdb_id": "51859",
+          "title": "Trigun: Badlands Rumble (2010)"
+        },
+        {
+          "tmdb_id": "15999",
+          "title": "Vampire Hunter D: Bloodlust (2001)"
+        }
+      ],
+      "size": 7,
+      "name": "Velocity Church"
+    },
+    {
+      "id": 6,
+      "keywords": [
+        "park",
+        "steven spielberg",
+        "extraterrestrial",
+        "little",
+        "prey",
+        "highly",
+        "spielberg",
+        "steven",
+        "alien",
+        "home"
+      ],
+      "auto_label": "6_park_steven spielberg_extraterrestrial_little",
+      "films": [
+        {
+          "tmdb_id": "329865",
+          "title": "Arrival (2016)"
+        },
+        {
+          "tmdb_id": "724475",
+          "title": "Ben 10 vs. the Universe: The Movie (2020)"
+        },
+        {
+          "tmdb_id": "601",
+          "title": "E.T. the Extra-Terrestrial (1982)"
+        },
+        {
+          "tmdb_id": "329",
+          "title": "Jurassic Park (1993)"
+        },
+        {
+          "tmdb_id": "11544",
+          "title": "Lilo & Stitch (2002)"
+        },
+        {
+          "tmdb_id": "766507",
+          "title": "Prey (2022)"
+        },
+        {
+          "tmdb_id": "302960",
+          "title": "Scooby-Doo! Moon Monster Madness (2015)"
+        }
+      ],
+      "size": 7,
+      "name": "First Contact"
+    },
+    {
+      "id": 7,
+      "keywords": [
+        "moon",
+        "world",
+        "robot",
+        "poor",
+        "factory",
+        "undergo",
+        "duo",
+        "better",
+        "worker",
+        "colleagues"
+      ],
+      "auto_label": "7_moon_world_robot_poor",
+      "films": [
+        {
+          "tmdb_id": "530",
+          "title": "A Grand Day Out (1990)"
+        },
+        {
+          "tmdb_id": "775",
+          "title": "A Trip to the Moon (1902)"
+        },
+        {
+          "tmdb_id": "13413",
+          "title": "BURN\u00b7E (2008)"
+        },
+        {
+          "tmdb_id": "662",
+          "title": "La Jet\u00e9e (1962)"
+        },
+        {
+          "tmdb_id": "19",
+          "title": "Metropolis (1927)"
+        },
+        {
+          "tmdb_id": "36107",
+          "title": "More (1998)"
+        }
+      ],
+      "size": 6,
+      "name": "Silver Nitrate"
+    },
+    {
+      "id": 8,
+      "keywords": [
+        "henry",
+        "join forces",
+        "need",
+        "teen",
+        "join",
+        "batman",
+        "hero",
+        "forces",
+        "fight crime",
+        "daffy"
+      ],
+      "auto_label": "8_henry_join forces_need_teen",
+      "films": [
+        {
+          "tmdb_id": "886396",
+          "title": "Batman and Superman: Battle of the Super Sons (2022)"
+        },
+        {
+          "tmdb_id": "67409",
+          "title": "Duck Dodgers in the 24\u00bdth Century (1953)"
+        },
+        {
+          "tmdb_id": "926670",
+          "title": "Henry Danger: The Movie (2025)"
+        },
+        {
+          "tmdb_id": "556901",
+          "title": "Teen Titans Go! vs. Teen Titans (2019)"
+        },
+        {
+          "tmdb_id": "829402",
+          "title": "Ultraman: Rising (2024)"
+        }
+      ],
+      "size": 5,
+      "name": "Cape & Antenna"
+    },
+    {
+      "id": 9,
+      "keywords": [
+        "sarah",
+        "stop",
+        "love",
+        "james cameron",
+        "cameron",
+        "known",
+        "called",
+        "james",
+        "shell",
+        "uses"
+      ],
+      "auto_label": "9_sarah_stop_love_james cameron",
+      "films": [
+        {
+          "tmdb_id": "9323",
+          "title": "Ghost in the Shell (1995)"
+        },
+        {
+          "tmdb_id": "152601",
+          "title": "Her (2013)"
+        },
+        {
+          "tmdb_id": "280",
+          "title": "Terminator 2: Judgment Day (1991)"
+        },
+        {
+          "tmdb_id": "218",
+          "title": "The Terminator (1984)"
+        },
+        {
+          "tmdb_id": "500664",
+          "title": "Upgrade (2018)"
+        }
+      ],
+      "size": 5,
+      "name": "Ghost Frequency"
+    },
+    {
+      "id": 10,
+      "keywords": [
+        "japan",
+        "monster",
+        "island",
+        "emerges",
+        "vs",
+        "discovered",
+        "fight",
+        "landscape",
+        "walk",
+        "collide"
+      ],
+      "auto_label": "10_japan_monster_island_emerges",
+      "films": [
+        {
+          "tmdb_id": "1678",
+          "title": "Godzilla (1954)"
+        },
+        {
+          "tmdb_id": "12636",
+          "title": "Godzilla Against MechaGodzilla (2002)"
+        },
+        {
+          "tmdb_id": "940721",
+          "title": "Godzilla Minus One (2023)"
+        },
+        {
+          "tmdb_id": "12561",
+          "title": "Godzilla vs. Destoroyah (1995)"
+        },
+        {
+          "tmdb_id": "399566",
+          "title": "Godzilla vs. Kong (2021)"
+        }
+      ],
+      "size": 5,
+      "name": "The Roar"
+    },
+    {
+      "id": 11,
+      "keywords": [
+        "memories",
+        "memory",
+        "unexpected",
+        "history",
+        "crime",
+        "change",
+        "finds",
+        "man",
+        "past",
+        "curiosity"
+      ],
+      "auto_label": "11_memories_memory_unexpected_history",
+      "films": [
+        {
+          "tmdb_id": "38",
+          "title": "Eternal Sunshine of the Spotless Mind (2004)"
+        },
+        {
+          "tmdb_id": "27205",
+          "title": "Inception (2010)"
+        },
+        {
+          "tmdb_id": "961323",
+          "title": "Nimona (2023)"
+        },
+        {
+          "tmdb_id": "1954",
+          "title": "The Butterfly Effect (2004)"
+        },
+        {
+          "tmdb_id": "13363",
+          "title": "The Man from Earth (2007)"
+        },
+        {
+          "tmdb_id": "530254",
+          "title": "The Witch: Part 1. The Subversion (2018)"
+        }
+      ],
+      "size": 6,
+      "name": "The Erased Room"
+    },
+    {
+      "id": 12,
+      "keywords": [
+        "powers",
+        "forces",
+        "future",
+        "past",
+        "abilities",
+        "existence",
+        "cares",
+        "arrives",
+        "teenager",
+        "develops"
+      ],
+      "auto_label": "12_powers_forces_future_past",
+      "films": [
+        {
+          "tmdb_id": "263115",
+          "title": "Logan (2017)"
+        },
+        {
+          "tmdb_id": "569094",
+          "title": "Spider-Man: Across the Spider-Verse (2023)"
+        },
+        {
+          "tmdb_id": "324857",
+          "title": "Spider-Man: Into the Spider-Verse (2018)"
+        },
+        {
+          "tmdb_id": "127585",
+          "title": "X-Men: Days of Future Past (2014)"
+        }
+      ],
+      "size": 4,
+      "name": "Fractured Timelines"
+    },
+    {
+      "id": 13,
+      "keywords": [
+        "girl",
+        "era",
+        "rescue",
+        "falls",
+        "existence",
+        "wrong",
+        "goes",
+        "distant future",
+        "little girl",
+        "loses"
+      ],
+      "auto_label": "13_girl_era_rescue_falls",
+      "films": [
+        {
+          "tmdb_id": "804370",
+          "title": "Arco (2025)"
+        },
+        {
+          "tmdb_id": "31011",
+          "title": "Mr. Nobody (2009)"
+        },
+        {
+          "tmdb_id": "354857",
+          "title": "Regular Show: The Movie (2015)"
+        },
+        {
+          "tmdb_id": "303867",
+          "title": "World of Tomorrow (2015)"
+        }
+      ],
+      "size": 4,
+      "name": "Forking Paths"
+    },
+    {
+      "id": 14,
+      "keywords": [
+        "masayuki",
+        "humankind",
+        "far",
+        "end",
+        "project",
+        "seek",
+        "humanity",
+        "called",
+        "episodes",
+        "destroy"
+      ],
+      "auto_label": "14_masayuki_humankind_far_end",
+      "films": [
+        {
+          "tmdb_id": "15137",
+          "title": "Evangelion: 1.0 You Are (Not) Alone (2007)"
+        },
+        {
+          "tmdb_id": "22843",
+          "title": "Evangelion: 2.0 You Can (Not) Advance (2009)"
+        },
+        {
+          "tmdb_id": "283566",
+          "title": "Evangelion: 3.0+1.0 Thrice Upon a Time (2021)"
+        },
+        {
+          "tmdb_id": "18491",
+          "title": "Neon Genesis Evangelion: The End of Evangelion (1997)"
+        }
+      ],
+      "size": 4,
+      "name": "Terminal Dogma"
+    },
+    {
+      "id": 15,
+      "keywords": [
+        "game",
+        "users",
+        "fun",
+        "player",
+        "developed",
+        "night",
+        "inside",
+        "world",
+        "soon finds",
+        "reach"
+      ],
+      "auto_label": "15_game_users_fun_player",
+      "films": [
+        {
+          "tmdb_id": "26662",
+          "title": "Detective Conan: The Phantom of Baker Street (2002)"
+        },
+        {
+          "tmdb_id": "761898",
+          "title": "Sword Art Online the Movie - Progressive - Aria of a Starless Night (2021)"
+        },
+        {
+          "tmdb_id": "893712",
+          "title": "Sword Art Online the Movie \u2013 Progressive \u2013 Scherzo of Deep Night (2022)"
+        },
+        {
+          "tmdb_id": "413594",
+          "title": "Sword Art Online the Movie: Ordinal Scale (2017)"
+        }
+      ],
+      "size": 4,
+      "name": "Logged In"
+    },
+    {
+      "id": 16,
+      "keywords": [
+        "killer",
+        "face",
+        "lifelike",
+        "jack",
+        "aliens",
+        "doctor",
+        "unfortunate",
+        "hiroshi",
+        "worker",
+        "identity"
+      ],
+      "auto_label": "16_killer_face_lifelike_jack",
+      "films": [
+        {
+          "tmdb_id": "447743",
+          "title": "Inuyashiki (2018)"
+        },
+        {
+          "tmdb_id": "1242898",
+          "title": "Predator: Badlands (2025)"
+        },
+        {
+          "tmdb_id": "1376434",
+          "title": "Predator: Killer of Killers (2025)"
+        },
+        {
+          "tmdb_id": "29452",
+          "title": "The Face of Another (1966)"
+        },
+        {
+          "tmdb_id": "31682",
+          "title": "The Incredible Shrinking Man (1957)"
+        }
+      ],
+      "size": 5,
+      "name": "Skin & Bone"
+    },
+    {
+      "id": 17,
+      "keywords": [
+        "villeneuve",
+        "denis",
+        "denis villeneuve",
+        "paul",
+        "universe",
+        "years",
+        "family",
+        "born",
+        "creator",
+        "gifted"
+      ],
+      "auto_label": "17_villeneuve_denis_denis villeneuve_paul",
+      "films": [
+        {
+          "tmdb_id": "78",
+          "title": "Blade Runner (1982)"
+        },
+        {
+          "tmdb_id": "335984",
+          "title": "Blade Runner 2049 (2017)"
+        },
+        {
+          "tmdb_id": "438631",
+          "title": "Dune (2021)"
+        },
+        {
+          "tmdb_id": "693134",
+          "title": "Dune: Part Two (2024)"
+        }
+      ],
+      "size": 4,
+      "name": "Desert Cathedral"
+    },
+    {
+      "id": 18,
+      "keywords": [
+        "scientist",
+        "creature",
+        "james",
+        "liberation",
+        "escape",
+        "jack",
+        "mad",
+        "poor",
+        "unorthodox",
+        "fears"
+      ],
+      "auto_label": "18_scientist_creature_james_liberation",
+      "films": [
+        {
+          "tmdb_id": "229",
+          "title": "Bride of Frankenstein (1935)"
+        },
+        {
+          "tmdb_id": "3035",
+          "title": "Frankenstein (1931)"
+        },
+        {
+          "tmdb_id": "792307",
+          "title": "Poor Things (2023)"
+        },
+        {
+          "tmdb_id": "10787",
+          "title": "The Invisible Man (1933)"
+        }
+      ],
+      "size": 4,
+      "name": "The Laboratory"
+    },
+    {
+      "id": 19,
+      "keywords": [
+        "tomorrow",
+        "combat",
+        "alien",
+        "hunted",
+        "dan",
+        "john",
+        "war",
+        "day",
+        "fight",
+        "team"
+      ],
+      "auto_label": "19_tomorrow_combat_alien_hunted",
+      "films": [
+        {
+          "tmdb_id": "137113",
+          "title": "Edge of Tomorrow (2014)"
+        },
+        {
+          "tmdb_id": "106",
+          "title": "Predator (1987)"
+        },
+        {
+          "tmdb_id": "1398",
+          "title": "Stalker (1979)"
+        },
+        {
+          "tmdb_id": "1091",
+          "title": "The Thing (1982)"
+        },
+        {
+          "tmdb_id": "588228",
+          "title": "The Tomorrow War (2021)"
+        },
+        {
+          "tmdb_id": "9016",
+          "title": "Treasure Planet (2002)"
+        }
+      ],
+      "size": 6,
+      "name": "Hostile Territory"
+    },
+    {
+      "id": 20,
+      "keywords": [
+        "star",
+        "inside",
+        "crew",
+        "alien",
+        "team",
+        "agrees",
+        "aliens",
+        "signal",
+        "unfortunate",
+        "skepticism"
+      ],
+      "auto_label": "20_star_inside_crew_alien",
+      "films": [
+        {
+          "tmdb_id": "348",
+          "title": "Alien (1979)"
+        },
+        {
+          "tmdb_id": "679",
+          "title": "Aliens (1986)"
+        },
+        {
+          "tmdb_id": "330459",
+          "title": "Rogue One: A Star Wars Story (2016)"
+        }
+      ],
+      "size": 3,
+      "name": "Deep Hull"
+    },
+    {
+      "id": 21,
+      "keywords": [
+        "daniel",
+        "wrong",
+        "universes",
+        "best",
+        "connected",
+        "cook",
+        "theme",
+        "opening",
+        "humorous",
+        "makes"
+      ],
+      "auto_label": "21_daniel_wrong_universes_best",
+      "films": [
+        {
+          "tmdb_id": "545611",
+          "title": "Everything Everywhere All at Once (2022)"
+        },
+        {
+          "tmdb_id": "482321",
+          "title": "Ron's Gone Wrong (2021)"
+        },
+        {
+          "tmdb_id": "301566",
+          "title": "Too Many Cooks (2014)"
+        }
+      ],
+      "size": 3,
+      "name": "Glitch Parade"
+    },
+    {
+      "id": 22,
+      "keywords": [
+        "dead",
+        "george",
+        "daffy",
+        "refuge",
+        "determined save",
+        "dont",
+        "factory",
+        "girlfriend",
+        "pennsylvania",
+        "mind"
+      ],
+      "auto_label": "22_dead_george_daffy_refuge",
+      "films": [
+        {
+          "tmdb_id": "923",
+          "title": "Dawn of the Dead (1978)"
+        },
+        {
+          "tmdb_id": "10331",
+          "title": "Night of the Living Dead (1968)"
+        },
+        {
+          "tmdb_id": "870360",
+          "title": "The Day the Earth Blew Up: A Looney Tunes Movie (2024)"
+        }
+      ],
+      "size": 3,
+      "name": "Dead Air"
+    },
+    {
+      "id": 23,
+      "keywords": [
+        "past",
+        "personality",
+        "isnt",
+        "tatsuya",
+        "struggling",
+        "remote",
+        "realises",
+        "price",
+        "brigade",
+        "week"
+      ],
+      "auto_label": "23_past_personality_isnt_tatsuya",
+      "films": [
+        {
+          "tmdb_id": "36865",
+          "title": "The Disappearance of Haruhi Suzumiya (2010)"
+        },
+        {
+          "tmdb_id": "14069",
+          "title": "The Girl Who Leapt Through Time (2006)"
+        },
+        {
+          "tmdb_id": "916192",
+          "title": "The Tunnel to Summer, the Exit of Goodbyes (2022)"
+        }
+      ],
+      "size": 3,
+      "name": "Summer Gate"
+    },
+    {
+      "id": 24,
+      "keywords": [
+        "life",
+        "able",
+        "just",
+        "chance",
+        "broken",
+        "space time",
+        "built",
+        "fighting",
+        "laws space",
+        "landscape"
+      ],
+      "auto_label": "24_life_able_just_chance",
+      "films": [
+        {
+          "tmdb_id": "522402",
+          "title": "Finch (2021)"
+        },
+        {
+          "tmdb_id": "20874",
+          "title": "Kin-dza-dza! (1986)"
+        },
+        {
+          "tmdb_id": "76341",
+          "title": "Mad Max: Fury Road (2015)"
+        }
+      ],
+      "size": 3,
+      "name": "Scorched Road"
+    },
+    {
+      "id": 25,
+      "keywords": [
+        "dog",
+        "human",
+        "soviet",
+        "humorous",
+        "transformed",
+        "perils",
+        "origins",
+        "time machine",
+        "social",
+        "mikhail"
+      ],
+      "auto_label": "25_dog_human_soviet_humorous",
+      "films": [
+        {
+          "tmdb_id": "43680",
+          "title": "Heart of a Dog (1988)"
+        },
+        {
+          "tmdb_id": "244267",
+          "title": "I Origins (2014)"
+        },
+        {
+          "tmdb_id": "20803",
+          "title": "Ivan Vasilyevich Changes His Profession (1973)"
+        },
+        {
+          "tmdb_id": "284995",
+          "title": "Scooby-Doo! Frankencreepy (2014)"
+        }
+      ],
+      "size": 4,
+      "name": "Strange Mirrors"
+    },
+    {
+      "id": 26,
+      "keywords": [
+        "cameron",
+        "james cameron",
+        "james",
+        "fight",
+        "family",
+        "physical",
+        "lengths",
+        "water",
+        "learn",
+        "orders"
+      ],
+      "auto_label": "26_cameron_james cameron_james_fight",
+      "films": [
+        {
+          "tmdb_id": "19995",
+          "title": "Avatar (2009)"
+        },
+        {
+          "tmdb_id": "83533",
+          "title": "Avatar: Fire and Ash (2025)"
+        },
+        {
+          "tmdb_id": "76600",
+          "title": "Avatar: The Way of Water (2022)"
+        }
+      ],
+      "size": 3,
+      "name": "The Canopy"
+    },
+    {
+      "id": 27,
+      "keywords": [
+        "alex",
+        "agency",
+        "option",
+        "commodity",
+        "destroying",
+        "dies",
+        "beautiful",
+        "creator",
+        "lies",
+        "eventual"
+      ],
+      "auto_label": "27_alex_agency_option_commodity",
+      "films": [
+        {
+          "tmdb_id": "185",
+          "title": "A Clockwork Orange (1971)"
+        },
+        {
+          "tmdb_id": "68",
+          "title": "Brazil (1985)"
+        },
+        {
+          "tmdb_id": "333339",
+          "title": "Ready Player One (2018)"
+        }
+      ],
+      "size": 3,
+      "name": "Pleasure Prison"
+    },
+    {
+      "id": 28,
+      "keywords": [
+        "nuclear",
+        "virus",
+        "sent",
+        "mental",
+        "eventual",
+        "effect",
+        "effects",
+        "expert",
+        "class",
+        "deadly virus"
+      ],
+      "auto_label": "28_nuclear_virus_sent_mental",
+      "films": [
+        {
+          "tmdb_id": "200085",
+          "title": "The Flu (2013)"
+        },
+        {
+          "tmdb_id": "17835",
+          "title": "Threads (1985)"
+        },
+        {
+          "tmdb_id": "63",
+          "title": "Twelve Monkeys (1995)"
+        }
+      ],
+      "size": 3,
+      "name": "Patient Zero"
+    },
+    {
+      "id": 29,
+      "keywords": [
+        "batman",
+        "knight",
+        "alternate",
+        "dark",
+        "returns",
+        "city",
+        "forcing",
+        "fight crime",
+        "era",
+        "restore"
+      ],
+      "auto_label": "29_batman_knight_alternate_dark",
+      "films": [
+        {
+          "tmdb_id": "123025",
+          "title": "Batman: The Dark Knight Returns, Part 1 (2012)"
+        },
+        {
+          "tmdb_id": "142061",
+          "title": "Batman: The Dark Knight Returns, Part 2 (2013)"
+        },
+        {
+          "tmdb_id": "183011",
+          "title": "Justice League: The Flashpoint Paradox (2013)"
+        }
+      ],
+      "size": 3,
+      "name": "The Cowl"
+    },
+    {
+      "id": 30,
+      "keywords": [
+        "things",
+        "face",
+        "future",
+        "inventor",
+        "duo",
+        "falls",
+        "teenager",
+        "time machine",
+        "romantic",
+        "travelers"
+      ],
+      "auto_label": "30_things_face_future_inventor",
+      "films": [
+        {
+          "tmdb_id": "105",
+          "title": "Back to the Future (1985)"
+        },
+        {
+          "tmdb_id": "165",
+          "title": "Back to the Future Part II (1989)"
+        },
+        {
+          "tmdb_id": "196",
+          "title": "Back to the Future Part III (1990)"
+        }
+      ],
+      "size": 3,
+      "name": "88 Miles"
+    },
+    {
+      "id": 31,
+      "keywords": [
+        "race",
+        "fantastic",
+        "connected",
+        "metal",
+        "hands",
+        "storm",
+        "building",
+        "duncan",
+        "encounters",
+        "peter"
+      ],
+      "auto_label": "31_race_fantastic_connected_metal",
+      "films": [
+        {
+          "tmdb_id": "818350",
+          "title": "Blush (2021)"
+        },
+        {
+          "tmdb_id": "72720",
+          "title": "Hot Wheels AcceleRacers: Ignition (2005)"
+        },
+        {
+          "tmdb_id": "575604",
+          "title": "The Call (2020)"
+        },
+        {
+          "tmdb_id": "950396",
+          "title": "The Gorge (2025)"
+        },
+        {
+          "tmdb_id": "1124",
+          "title": "The Prestige (2006)"
+        },
+        {
+          "tmdb_id": "1167366",
+          "title": "Uranus 2324 (2024)"
+        }
+      ],
+      "size": 6,
+      "name": "Hidden Wires"
+    }
+  ]
+}

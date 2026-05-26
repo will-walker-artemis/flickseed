@@ -1,0 +1,34 @@
+{
+  "lines": [
+    {
+      "name": "Outer Reach",
+      "color": "#9d0500",
+      "path": [12, 8, 31, 25, 6, 19, 0, 20],
+      "note": "Superheroes fracture through encounters and hostile space toward the void — Fractured Timelines to Deep Hull"
+    },
+    {
+      "name": "Slow Burn",
+      "color": "#03182d",
+      "path": [1, 23, 13, 21, 28, 24, 2, 27],
+      "note": "Blazing anime energy cools through time paradoxes, apocalypse, and quiet machines into dystopian control — Blazing Spirit to Pleasure Prison"
+    },
+    {
+      "name": "Long Descent",
+      "color": "#756b30",
+      "path": [10, 28, 24, 7, 2, 19, 20, 0, 17],
+      "note": "Kaiju destruction through contagion and scorched earth, past early cinema, through cold space to the desert — The Roar to Desert Cathedral"
+    },
+    {
+      "name": "Signal Line",
+      "color": "#1a3330",
+      "path": [17, 9, 4, 29, 12, 8, 11, 25],
+      "note": "Villeneuve's worlds through cyberpunk and dark capes into erased memory — Desert Cathedral to Strange Mirrors"
+    },
+    {
+      "name": "Projection Booth",
+      "color": "#1f2549",
+      "path": [4, 5, 1, 15, 27, 2, 7, 18],
+      "note": "Cyberpunk doctrine through anime velocity, virtual worlds, and early cinema to the mad scientist's lab — Neon Doctrine to The Laboratory"
+    }
+  ]
+}
