@@ -266,8 +266,10 @@ def run(k: int | None = None) -> None:
     print(f"Wrote {GRAPH_OUTPUT}")
 
     # Find candidate paths
-    print("\nRanking candidate paths...")
-    candidates = find_candidate_paths(G, centroids)
+    max_length = graph_cfg.get("max_path_length", 8)
+    top_n = graph_cfg.get("top_n_paths", 50)
+    print(f"\nRanking candidate paths (max_length={max_length}, top_n={top_n})...")
+    candidates = find_candidate_paths(G, centroids, max_length=max_length, top_n=top_n)
     print(f"Found {len(candidates)} diverse candidate paths")
 
     # Enrich with station keywords for readability

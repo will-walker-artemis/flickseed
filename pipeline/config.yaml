@@ -15,10 +15,6 @@ models:
   keyword_pca_dim: 64
   crew_pca_dim: 64
 
-# Cluster stage (BERTopic → stations).
-# min_topic_size: fewest films a station can have. Lower = more stations.
-# With 150 films targeting 25-40 stations, 3-4 films/station is typical.
-# nr_topics: if set, BERTopic merges down to this many (None = let HDBSCAN decide).
 # Graph stage (station edges + candidate paths).
 # k: how many nearest neighbors each station considers. Mutual filter means
 # the actual edge count will be lower (both sides must agree).
