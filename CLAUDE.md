@@ -26,9 +26,13 @@ npm run preview     # preview production build
 
 ```bash
 uv sync                                       # install/update deps
-uv run python scripts/run_pipeline.py          # full pipeline (stub)
+uv run python scripts/run_pipeline.py          # full pipeline (all stages)
+uv run python scripts/run_pipeline.py --from embed  # resume from a stage
+uv run python scripts/run_pipeline.py --only cluster # run one stage
 uv run python scripts/diagnose_embeddings.py   # top-5-similar diagnostic
 uv run python scripts/plot_embeddings.py       # interactive 2D scatter (UMAP/t-SNE + Plotly)
+uv run python scripts/plot_stations.py         # stations scatter (colored by cluster)
+uv run python scripts/print_candidates.py      # candidate subway lines for curation
 ```
 
 Pipeline requires `TMDB_API_KEY` — copy `pipeline/.env.example` to `pipeline/.env` and fill it in.
