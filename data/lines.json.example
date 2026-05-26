@@ -1,0 +1,10 @@
+{
+  "lines": [
+    {
+      "name": "Line Name Here",
+      "color": "#e63946",
+      "path": [6, 25, 31, 21, 13, 1, 5, 4, 9],
+      "note": "Optional note about why you picked this line"
+    }
+  ]
+}
